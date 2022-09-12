@@ -39,6 +39,22 @@ If you already have repository, just follow steps given below to install Postgre
  sudo dnf -y install postgresql13 postgresql13-server postgresql13-contrib
 ```
 
+Login to the PostgreSQL CLI with postgres user.
+
+```bash
+ psql -U postgres
+```
+
+Create a database for SonarQube.
+
+```bash
+ CREATE USER sonar WITH PASSWORD 'redhat123';
+ CREATE DATABASE sonarqube;
+ ALTER DATABASE sonarqube OWNER TO sonar;
+ grant all privileges on database sonarqube to sonar ;
+ exit
+```
+
 Open /var/lib/pgsql/data/pg_hba.conf file to change the authentication to md5.
 
 ```bash
@@ -73,22 +89,6 @@ Once changed, it should look like the following.
  # IPv6 local connections:
  host    all             all             ::1/128                 md5
  ...
-```
-
-Login to the PostgreSQL CLI with postgres user.
-
-```bash
- psql -U postgres
-```
-
-Create a database for SonarQube.
-
-```bash
- CREATE USER sonar WITH PASSWORD 'redhat123';
- CREATE DATABASE sonarqube;
- ALTER DATABASE sonarqube OWNER TO sonar;
- grant all privileges on database sonarqube to sonar ;
- exit
 ```
 
 ## Setup Sonarqube Server
