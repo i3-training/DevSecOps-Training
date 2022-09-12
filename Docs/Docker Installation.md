@@ -1,16 +1,18 @@
 # Docker Installation
 
+![devops-toys](../images/docker-logo.png)
+
 ## Install Docker Engine on RHEL
 
 To get started with Docker Engine on RHEL, make sure you meet the prerequisites, then install Docker.
 
 ## OS Requirements
 
-To install Docker Engine, you need a maintained version of RHEL 7, RHEL 8 or RHEL 9 on s390x (IBM Z). Archived versions aren’t supported or tested.
+To install Docker Engine, you need a maintained version of RHEL 7, RHEL 8 or RHEL 9.
 
-## Uninstall old versions and podman
+## Uninstall old versions docker
 
-it is better to delete podman first to avoid conflicts between podman and docker
+Older versions of Docker if these are installed, uninstall them, along with associated dependencies.
 
 ```bash
  sudo yum remove docker \
@@ -21,7 +23,14 @@ it is better to delete podman first to avoid conflicts between podman and docker
                  docker-latest-logrotate \
                  docker-logrotate \
                  docker-engine \
-                 podman \
+```
+
+## Uninstall podman and runc
+
+it is better to delete podman first to avoid conflicts between podman and docker
+
+```bash
+ sudo yum remove podman \
                  runc
 ```
 
@@ -35,7 +44,7 @@ Before you install Docker Engine for the first time on a new host machine, you n
 sudo yum install -y yum-utils
 sudo yum-config-manager \
      --add-repo \
-     https://download.docker.com/linux/rhel/docker-ce.repo
+     https://download.docker.com/linux/centos/docker-ce.repo
 ```
 
 ### Install the docker engine
@@ -55,13 +64,22 @@ yum list docker-ce --showduplicates | sort -r
 sudo yum install docker-ce-<VERSION_STRING> docker-ce-cli-<VERSION_STRING> containerd.io docker-compose-plugin
 ```
 
-3. Start Docker
+### Start Docker
+
+Not forget to turn on the docker service.
 
 ```bash
-sudo systemctl start docker
+#start service
+sudo systemctl start docker.service
+
+#Check status service
+sudo systemctl status docker.service
+
 ```
 
-4. Verify that Docker Engine is installed correctly by running the hello-world image.
+### Deploy Container
+
+Verify that Docker Engine is installed correctly by running the hello-world image.
 
 ```bash
 sudo docker run hello-world
