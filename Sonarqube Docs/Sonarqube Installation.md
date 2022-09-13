@@ -152,3 +152,35 @@ Create a database sonarqube for sonar user.
  exit
 ```
 
+Setting up SonarQube as a Service
+
+```bash
+ vim /etc/systemd/system/sonarqube.service
+```
+
+Copy the following content on to the file.
+
+```bash
+ ...
+ [Unit]
+ Description=SonarQube service
+ After=syslog.target network.target
+
+ [Service]
+ Type=forking
+
+ ExecStart=/opt/sonarqube/bin/linux-x86-64/sonar.sh start
+ ExecStop=/opt/sonarqube/bin/linux-x86-64/sonar.sh stop
+
+ User=sonar
+ Group=sonar
+ Restart=always
+
+ LimitNOFILE=65536
+ LimitNPROC=8192
+
+ [Install]
+ WantedBy=multi-user.target
+ ...
+```
+
