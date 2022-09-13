@@ -6,16 +6,19 @@ This guide will help you to set up and configure SonarQube 8.9 LTS versions on L
 1. A small-scale (individual or small team) instance of the SonarQube server requires at least 2GB of RAM to run efficiently and 1GB of free RAM for the OS.
 2. OpenJDK 11 or JRE 11.
 3. PostgreSQL version 13 or greater.
-4. All sonarquber process should run as a non-root sonar user.
+4. Add requirements Elastic Search for resources Linux.
+5. All sonarquber process should run as a non-root sonar user.
 
 ## Install Java Library
+
+You must be able to install Java (Oracle JRE or OpenJDK) on the machine where you plan to run SonarQube.
 
 ```bash
  sudo dnf install java-11-openjdk java-11-openjdk-devel
 ```
 
 ## Install PostgreSQL Database For SonarQube
-We will use version 13 of PostgreSQL. If you have no repository yet, follow this steps given below to install PostgreSQL.
+We will use version 13 of PostgreSQL. If you don't have repository of PostgreSQL, follow this step for installing PostgreSQL in RHEL based.
 
 ```bash
 #Install the repository RPM:
@@ -33,7 +36,7 @@ We will use version 13 of PostgreSQL. If you have no repository yet, follow this
  sudo systemctl start postgresql-13
 ```
 
-If you already have repository, just follow steps given below to install PostgreSQL 13 versions.
+If you already have repository of PostgreSQL, just follow steps given below to install PostgreSQL version 13.
 
 ```bash
  sudo dnf -y install postgresql13 postgresql13-server postgresql13-contrib
@@ -91,6 +94,12 @@ Once changed, it should look like the following.
  ...
 ```
 
+You need to restart PostgreSQL service after changed method of pg_hba.
+
+```bash
+ systemctl restart postgresql-13.service
+```
+
 ## Setup Sonarqube Server
 Download sonarqube installation file to /opt folder.
 
@@ -103,7 +112,7 @@ Unzip SonarQube source files and rename the folder.
 
 ```bash
  sudo unzip sonarqube-8.9.9.56886.zip
- sudo mv sonarqube-8.9.9.56886.zip sonarqube
+ sudo mv sonarqube-8.9.9.56886 sonarqube
 ```
 
 Open /opt/sonarqube/conf/sonar.properties file.
@@ -183,4 +192,3 @@ Copy the following content on to the file.
  WantedBy=multi-user.target
  ...
 ```
-
