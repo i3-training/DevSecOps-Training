@@ -61,7 +61,7 @@ Create a database for SonarQube.
 Open /var/lib/pgsql/data/pg_hba.conf file to change the authentication to md5.
 
 ```bash
- sudo vi /var/lib/pgsql/13/data/pg_hba.conf
+ sudo vim /var/lib/pgsql/13/data/pg_hba.conf
 ```
 
 Find the following lines at the bottom of the file and change peer to trust and idnet to md5
@@ -128,7 +128,13 @@ Uncomment and edit the parameters as shown below. Change the password accordingl
  sonar.jdbc.username=sonar
  sonar.jdbc.password=redhat123
  sonar.jdbc.url=jdbc:postgresql://localhost/sonarqube?currentSchema=sonarqubeschema
+ ...
+ 
+ ...
  sonar.web.host=0.0.0.0
+ ...
+
+ ...
  sonar.web.port=9000
  ...
 ```
@@ -227,3 +233,8 @@ Copy the following content on to the file.
  sudo systemctl start sonarqube
  sudo systemctl status sonarqube
 ```
+
+<!-- ```bash
+ vim var/lib/pgsql/13/data/postgresql.conf
+```
+port=5428 -->
