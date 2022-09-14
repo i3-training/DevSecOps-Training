@@ -6,7 +6,7 @@ This guide will help you to set up and configure SonarQube 8.9 LTS versions on L
 1. A small-scale (individual or small team) instance of the SonarQube server requires at least 2GB of RAM to run efficiently and 1GB of free RAM for the OS.
 2. OpenJDK 11 or JRE 11.
 3. PostgreSQL version 13 or greater.
-4. Add requirements Elastic Search for resources Linux.
+4. Add requirements Elasticsearch for resources Linux.
 5. All sonarquber process should run as a non-root sonar user.
 
 ## Install Java Library
@@ -118,7 +118,7 @@ Unzip SonarQube source files and rename the folder.
 Open /opt/sonarqube/conf/sonar.properties file.
 
 ```bash
-sudo vi /opt/sonarqube/conf/sonar.properties
+sudo vim /opt/sonarqube/conf/sonar.properties
 ```
 
 Uncomment and edit the parameters as shown below. Change the password accordingly. You will find jdbc parameter under PostgreSQL section.
@@ -164,7 +164,7 @@ Create a database sonarqube for sonar user.
 Setting up SonarQube as a Service
 
 ```bash
- vim /etc/systemd/system/sonarqube.service
+ sudo vim /etc/systemd/system/sonarqube.service
 ```
 
 Copy the following content on to the file.
@@ -172,7 +172,7 @@ Copy the following content on to the file.
 ```bash
  ...
  [Unit]
- Description=SonarQube service
+ Description=Sonarqube Service
  After=syslog.target network.target
 
  [Service]
@@ -181,14 +181,52 @@ Copy the following content on to the file.
  ExecStart=/opt/sonarqube/bin/linux-x86-64/sonar.sh start
  ExecStop=/opt/sonarqube/bin/linux-x86-64/sonar.sh stop
 
+ LimitNOFILE=131072
+ LimitNPROC=8192
+
  User=sonar
  Group=sonar
  Restart=always
 
- LimitNOFILE=65536
- LimitNPROC=8192
-
  [Install]
  WantedBy=multi-user.target
  ...
+```
+
+```bash
+ sudo vim /etc/sysctl.conf
+```
+
+```bash
+ sudo sysctl -w vm.max_map_count=524288
+ sudo sysctl -w fs.file-max=131072
+```
+
+```bash
+ sudo echo "vm.max_map_count=524288" >> /etc/sysctl.conf
+ sudo echo "fs.file-max=131072" >> /etc/sysctl.conf
+```
+
+```bash
+ sudo vim /etc/security/limits.conf 
+```
+
+```bash
+ sonarqube       -       nofile          131072
+ sonarqube       -       nproc           8192
+```
+
+<!-- ```bash
+ ulimit -n 131072
+ ulimit -u 8192
+```  -->
+
+```bash
+ sudo firewall-cmd --add-port=9000/{tcp,udp} --permanent 
+```
+
+```bash
+ sudo systemctl enable sonarqube
+ sudo systemctl start sonarqube
+ sudo systemctl status sonarqube
 ```
