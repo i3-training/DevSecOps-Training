@@ -38,8 +38,14 @@ Fill in your git username and password (using personal access token from GitHub)
 
 Now we have new credentials. Use ID for current project
 
-## **Create a pipeline job**
 
+## **Create repository in docker hub**
+Login to your https://hub.docker.com/ and create new repository
+
+![getting-started](/images/25.png)
+![getting-started](/images/26.png)
+
+## **Create a pipeline job**
 ### 1. Open the web browser and open localhost:8080
 ### 2. The **Jenkins dashboard** that opens, **create new jobs** there
 ### 3. Select and define what Jenkins job that to be created
@@ -52,7 +58,15 @@ Now we have new credentials. Use ID for current project
 Checklist `The project is paramaterized` and click `Add Parameter`. Choose `Password Parameter`. Fill the information needed.
 ![getting-started](/images/4.png)
 
-### 6. Create pipeline script 
+### 6. Set Build Triggers
+Check "Poll SCM" to polls the SCM periodically for checking if any changes/ new commits were made and shall build the project if any new commits were pushed since the last build.
+
+![getting-started](/images/24.png)
+
+- H * * * * = check every hour
+
+
+### 7. Create pipeline script 
 In this guide, we will create pipeline to create image from our Dockerfile in SCM and push it to docker registry. Open your text editor(ex: VS Code), and start write your pipeline script.
 
 ``` bash
@@ -69,9 +83,9 @@ pipeline {
 ```
 
 At the first steps, we want to do SCM Checkout or Git Pull from our SCM. The command will be like above for pull our SCM. Fill the information needed, in this case :
-- branches : main -> we want pull from main branch.
-- credentialsId : github-login -> this is our credential to login to SCM, how to config it will be explained at below.
-- url : https://github.com/Prospica/demo-pipeline -> our project url in SCM
+- branches : main -> pull from main branch.
+- credentialsId : github-login
+- url : https://github.com/Yuzyzy88/carManagementDashboad.git -> our project url in SCM
 
 ``` bash
 pipeline {
@@ -123,6 +137,38 @@ pipeline {
                 '''
             }
         }
+    }
+}
+```
+Add the next stage to push image to our docker hub. First, we need to login to docker, add set +x and set -x so your password doesn't shown in console Jenkins. Push the image with docker push command.
+
+``` bash 
+pipeline {
+    agent any
+    stages {
+        stage('SCM Checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github-login', url: 'https://github.com/Yuzyzy88/carManagementDashboad.git']]])
+            }
+        }
+        stage('Create Image') {
+            steps {
+                sh '''
+                docker image rm sulistiowatiayu/first-trial:v1 || echo "No existing image found"
+                docker build --no-cache -t sulistiowatiayu/first-trial:v1 . 
+                '''
+            }
+        }
+        stage('Push Image') {
+            steps {
+                sh '''
+                set +x
+                docker login --username=sulistiowatiayu --password=$dockerPassword
+                set -x
+                docker push sulistiowatiayu/first-trial:v1
+                '''
+            }
+        }
         stage('Deploy Image') {
             steps {
                 sh '''
@@ -134,8 +180,10 @@ pipeline {
     }
 }
 ```
-Add the last stage to push image to our docker hub. First, we need to login to docker, add set +x and set -x so your password doesn't shown in console Jenkins. Push the image with docker push command.
-### 7. Insert pipeline script to Jenkins
+
+The last stage is stop and delete the existing container before we run new container.
+
+### 8. Insert pipeline script to Jenkins
 There is two way to insert our pipeline script to Jenkins.
 ![getting-started](/images/5.png)
 
@@ -151,13 +199,13 @@ Save pipeline script into your git project and name it with `JenkinsFile`.
 - Branch to build = used branch
 - Script path = fill with Jenkinsfile.
 
-### 8. Save the configuration
+### 9. Save the configuration
 
-### 9. Run your pipeline
+### 10. Run your pipeline
 ![getting-started](/images/19.png)
 ![getting-started](/images/20.png)
 
-### 10. Monitor your pipeline
+### 11. Monitor your pipeline
 
 ![getting-started](/images/21.png)
 to check the build history, you can click the number and Select `Console Output`
