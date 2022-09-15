@@ -33,7 +33,7 @@ sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
 sudo yum -y install jenkins
 ```
 5. Start and Enable Jenkins Service
-After installation, start and enable Jenkins service
+after installation, start and enable Jenkins service
 ``` bash
 sudo systemctl start jenkins
 sudo systemctl enable jenkins
