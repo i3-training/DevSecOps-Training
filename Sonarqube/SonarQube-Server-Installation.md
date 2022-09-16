@@ -11,14 +11,14 @@ This guide will help you to set up and configure SonarQube 8.9 LTS versions on L
 
 ## Install Java Library
 
-You must be able to install Java (Oracle JRE or OpenJDK) on the machine where you plan to run SonarQube.
+You must be able to install Java (Oracle JRE or OpenJDK) on the machine where you plan to run SonarQube:
 
 ```bash
  sudo dnf install java-11-openjdk java-11-openjdk-devel
 ```
 
 ## Install PostgreSQL Database For SonarQube
-We will use version 13 of PostgreSQL. If you don't have repository of PostgreSQL, follow this step for installing PostgreSQL in RHEL based.
+We will use version 13 of PostgreSQL. If you don't have repository of PostgreSQL, follow this step for installing PostgreSQL in RHEL based:
 
 ```bash
 #Install the repository RPM:
@@ -36,19 +36,19 @@ We will use version 13 of PostgreSQL. If you don't have repository of PostgreSQL
  sudo systemctl start postgresql-13
 ```
 
-If you already have repository of PostgreSQL, just follow steps given below to install PostgreSQL version 13.
+If you already have repository of PostgreSQL, just follow steps given below to install PostgreSQL version 13:
 
 ```bash
  sudo dnf -y install postgresql13 postgresql13-server postgresql13-contrib
 ```
 
-Login to the PostgreSQL CLI with postgres user.
+Login to the PostgreSQL CLI with postgres user:
 
 ```bash
  psql -U postgres
 ```
 
-Create a database for SonarQube.
+Create a database for SonarQube:
 
 ```bash
  CREATE USER sonar WITH PASSWORD 'redhat123';
@@ -58,13 +58,13 @@ Create a database for SonarQube.
  exit
 ```
 
-Open /var/lib/pgsql/data/pg_hba.conf file to change the authentication to md5.
+Open /var/lib/pgsql/data/pg_hba.conf file to change the authentication to md5:
 
 ```bash
  sudo vim /var/lib/pgsql/13/data/pg_hba.conf
 ```
 
-Find the following lines at the bottom of the file and change peer to trust and idnet to md5
+Find the following lines at the bottom of the file and change peer to trust and idnet to md5:
 
 ```bash
  ...
@@ -79,7 +79,7 @@ Find the following lines at the bottom of the file and change peer to trust and 
  ...
 ```
 
-Once changed, it should look like the following.
+Once changed, it should look like the following:
 
 ```bash
  ...
@@ -94,34 +94,34 @@ Once changed, it should look like the following.
  ...
 ```
 
-You need to restart PostgreSQL service after changed method of pg_hba.
+You need to restart PostgreSQL service after changed method of pg_hba.conf:
 
 ```bash
  systemctl restart postgresql-13.service
 ```
 
 ## Setup Sonarqube Server
-Download sonarqube installation file to /opt folder.
+Download sonarqube installation file to /opt folder:
 
 ```bash
  cd /opt/
  sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.9.9.56886.zip
 ```
 
-Unzip SonarQube source files and rename the folder.
+Unzip SonarQube source files and rename the folder:
 
 ```bash
  sudo unzip sonarqube-8.9.9.56886.zip
  sudo mv sonarqube-8.9.9.56886 sonarqube
 ```
 
-Open /opt/sonarqube/conf/sonar.properties file.
+Open /opt/sonarqube/conf/sonar.properties file:
 
 ```bash
 sudo vim /opt/sonarqube/conf/sonar.properties
 ```
 
-Uncomment and edit the parameters as shown below. Change the password accordingly. You will find jdbc parameter under PostgreSQL section.
+Uncomment and edit the parameters as shown below. Change the password accordingly. You will find jdbc parameter under PostgreSQL section:
 
 ```bash
  ...
@@ -141,7 +141,7 @@ Uncomment and edit the parameters as shown below. Change the password accordingl
 
 ## Add Sonar User and Privileges
 
-Create a user named sonarqube and make it the owner of the /opt/sonarqube directory.
+Create a user named sonarqube and make it the owner of the /opt/sonarqube directory:
 
 ```bash
  sudo useradd sonar
@@ -149,13 +149,13 @@ Create a user named sonarqube and make it the owner of the /opt/sonarqube direct
  sudo chown -R sonar:sonar /opt/sonarqube
 ```
 
-Login to the sonarqube PostgreSQL CLI with sonar user.
+Login to the sonarqube PostgreSQL CLI with sonar user:
 
 ```bash
  psql sonarqube -U sonar
 ```
 
-Create a database sonarqube for sonar user.
+Create a database sonarqube for sonar user:
 
 ```bash
  grant all privileges on database sonarqube to sonar;
@@ -167,13 +167,13 @@ Create a database sonarqube for sonar user.
  exit
 ```
 
-Setting up SonarQube as a Service
+Setting up SonarQube as a Service:
 
 ```bash
  sudo vim /etc/systemd/system/sonarqube.service
 ```
 
-Copy the following content on to the file.
+Copy the following content on to the file:
 
 ```bash
  ...
@@ -199,9 +199,17 @@ Copy the following content on to the file.
  ...
 ```
 
+>If you're running on Linux, you must ensure that:
+    - vm.max_map_count is greater than or equal to 524288
+    - fs.file-max is greater than or equal to 131072
+    - the user running SonarQube can open at least 131072 file descriptors
+    - the user running SonarQube can open at least 8192 threads
+
 ```bash
  sudo vim /etc/sysctl.conf
 ```
+
+Set them dynamically for the current session by running the following commands as root:
 
 ```bash
  sudo sysctl -w vm.max_map_count=524288
@@ -215,6 +223,8 @@ Copy the following content on to the file.
  sudo echo "fs.file-max=131072" >> /etc/sysctl.conf
 ```
 
+Specify limits inside your unit file in systemd to start SonarQube:
+
 ```bash
  sudo vim /etc/security/limits.conf 
 ```
@@ -224,13 +234,17 @@ Copy the following content on to the file.
  sonarqube       -       nproc           8192
 ```
 
-```bash
- sudo firewall-cmd --add-port=9000/{tcp,udp} --permanent 
-```
+Set Up a firewall by specifying the port we need to open:
 
 ```bash
- sudo systemctl enable sonarqube
- sudo systemctl start sonarqube
+ sudo firewall-cmd --add-port=9000/{tcp,udp} --permanent 
+ sudo firewall-cmd --reload
+```
+
+Start SonarQube with following this commands:
+
+```bash
+ sudo systemctl enable --now sonarqube 
  sudo systemctl status sonarqube
 ```
 
