@@ -108,5 +108,30 @@ sudo systemctl start nexus
 
 ### 3. Login to nexus web interface
 
-You can access nexus web interface using your server ip or your server url
+You can access nexus web interface using your server ip or your server url followed by port that you specified. you can find your port configuration in $NEXUS_HOME/etc/nexus-default.properties. the file example as shown below.
 
+```conf
+## DO NOT EDIT - CUSTOMIZATIONS BELONG IN $data-dir/etc/nexus.properties
+##
+# Jetty section
+application-port=8081
+application-host=0.0.0.0
+nexus-args=${jetty.etc}/jetty.xml,${jetty.etc}/jetty-http.xml,${jetty.etc}/jetty-requestlog.xml
+nexus-context-path=/
+
+# Nexus section
+nexus-edition=nexus-pro-edition
+nexus-features=\
+ nexus-pro-feature
+
+nexus.hazelcast.discovery.isEnabled=true
+```
+
+> **Note**
+>
+> if you cant access the nexus from browser try change `application-host` to 0.0.0.0
+
+your default admin password can be found in /app/sonatype-work/nexus3/admin.password
+after login with default password you need to follow setup wizard to configure your nexus repo for the first time.
+
+After installing Nexus is complete next is setting up a registry on nexus can be followed here [configure nexus](/nexus/configure-nexus.md)
