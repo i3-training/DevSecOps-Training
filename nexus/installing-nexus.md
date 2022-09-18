@@ -108,3 +108,5 @@ sudo systemctl start nexus
 
 ### 3. Login to nexus web interface
 
+You can access nexus web interface using your server ip or your server url
+
