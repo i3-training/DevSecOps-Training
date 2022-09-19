@@ -200,6 +200,7 @@ Copy the following content on to the file:
 ```
 
 >If you're running on Linux, you must ensure that:
+
     - vm.max_map_count is greater than or equal to 524288
     - fs.file-max is greater than or equal to 131072
     - the user running SonarQube can open at least 131072 file descriptors
