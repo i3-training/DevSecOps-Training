@@ -83,8 +83,10 @@ Go to directory of your repository and adding this command:
  -Dsonar.projectKey="your-project-key" \
  -Dsonar.sources=. \
  -Dsonar.host.url=http://10.8.60.126:9000 \
- -Dsonar.login="your-token"
+ -Dsonar.login="your-generated-token"
 ```
+
+>We need to replace the-generated-token with the token from above.
 
 Or you can create a configuration file in your project's root directory called sonar-project.properties
 
@@ -105,3 +107,5 @@ Or you can create a configuration file in your project's root directory called s
  # Encoding of the source code. Default is default system encoding
  #sonar.sourceEncoding=UTF-8
 ```
+
+After executing the command, the results will be available on the Projects dashboard – at http://localhost:9000.
