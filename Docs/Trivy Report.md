@@ -5,15 +5,18 @@
 ## Pull Images
 
 Try to pull the latest version php image and php 7.2.34
+<br />
 ![devops-toys](../images/1.png)
 
 ## Create A Dockerfile
 
 Create a folder containing Dockerfile, github access token, and a simple php program.
+<br />
 ![devops-toys](../images/2.png)
 
 ## Build Image
 
+ <br />
 Continued by building the Dockerfile into an image
 ![devops-toys](../images/3.png)
 
