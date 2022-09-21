@@ -4,9 +4,11 @@
 
 ## Pull Images
 
-Try to pull the latest version php image and php 7.2.34
-<br />
-![devops-toys](../images/1.png)
+Try to pull image php 7.2.34
+
+```bash
+docker pull php:7.2.34
+```
 
 ## Create A Dockerfile
 
@@ -18,6 +20,7 @@ Create a folder containing Dockerfile, github access token, and a simple php pro
 
  <br />
 Continued by building the Dockerfile into an image
+
 ![devops-toys](../images/3.png)
 
 ## Misconfig Scanner
