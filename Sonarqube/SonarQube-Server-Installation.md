@@ -58,7 +58,7 @@ Create a database for SonarQube:
  exit
 ```
 
-Open /var/lib/pgsql/data/pg_hba.conf file to change the authentication to md5:
+Open `/var/lib/pgsql/data/pg_hba.conf` file to change the authentication to md5:
 
 ```bash
  sudo vim /var/lib/pgsql/13/data/pg_hba.conf
@@ -94,14 +94,14 @@ Once changed, it should look like the following:
  ...
 ```
 
-You need to restart PostgreSQL service after changed method of pg_hba.conf:
+You need to restart PostgreSQL service after changed method of `pg_hba.conf`:
 
 ```bash
  systemctl restart postgresql-13.service
 ```
 
 ## Setup Sonarqube Server
-Download sonarqube installation file to /opt folder:
+Download sonarqube installation file to `/opt` folder:
 
 ```bash
  cd /opt/
@@ -115,7 +115,7 @@ Unzip SonarQube source files and rename the folder:
  sudo mv sonarqube-8.9.9.56886 sonarqube
 ```
 
-Open /opt/sonarqube/conf/sonar.properties file:
+Open `/opt/sonarqube/conf/sonar.properties` file:
 
 ```bash
 sudo vim /opt/sonarqube/conf/sonar.properties
@@ -141,7 +141,7 @@ Uncomment and edit the parameters as shown below. Change the password accordingl
 
 ## Add Sonar User and Privileges
 
-Create a user named sonarqube and make it the owner of the /opt/sonarqube directory:
+Create a user named sonarqube and make it the owner of the `/opt/sonarqube` directory:
 
 ```bash
  sudo useradd sonar

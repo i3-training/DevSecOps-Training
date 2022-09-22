@@ -3,7 +3,7 @@
 ## Install Git
 
 Chances are that the git command is already available on your RHEL 8 system.
-Execute git --version to check whether the git tool is already installed.
+Execute `git --version` to check whether the git tool is already installed.
 
 Download git with following this command:
 
@@ -88,7 +88,7 @@ Go to directory of your repository and adding this command:
 
 >We need to replace the-generated-token with the token from above.
 
-Or you can create a configuration file in your project's root directory called sonar-project.properties
+Or you can create a configuration file in your project's root directory called `sonar-project.properties`
 
 ```bash
  # must be unique in a given SonarQube instance
@@ -108,4 +108,4 @@ Or you can create a configuration file in your project's root directory called s
  #sonar.sourceEncoding=UTF-8
 ```
 
-After executing the command, the results will be available on the Projects dashboard – at http://localhost:9000.
+After executing the command, the results will be available on the Projects dashboard at - `http://localhost:9000`.
