@@ -1,10 +1,11 @@
 version: "3.4"
 services:
   app:
-    container_name: app-a7 
+    container_name: gosip-app 
     build:
       context: ../
       dockerfile: deploy/Dockerfile
+    image: gosip-app:local
     ports:
       - "10007:10007"
     volumes:

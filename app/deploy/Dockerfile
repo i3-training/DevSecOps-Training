@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED 1
 
 RUN mkdir /app
 WORKDIR /app
-COPY app/requirements.txt /app/requirements.txt
+COPY src/requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
 COPY src/ /app
 EXPOSE 10007
