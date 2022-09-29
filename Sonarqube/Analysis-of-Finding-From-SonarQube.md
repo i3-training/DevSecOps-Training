@@ -32,23 +32,7 @@ A default quality gates from SonarQube is already there. Administrators can also
 
 # Integrating SonarQube into Jenkins
 
-Here are some examples for every scanner, assuming you run on Unix slaves and you have configured a server named "My SonarQube Server" as well as required tools. If you run on Windows slaves, just replace `sh` with `bat`.
-
-```bash
- node {
-   stage('SCM') {
-     git 'https://github.com/foo/bar.git'
-   }
-   stage('SonarQube analysis') {
-     def scannerHome = tool 'SonarScanner 4.0';
-     withSonarQubeEnv('My SonarQube Server') { // If you have configured more than one global server connection, you can specify its name
-       sh "${scannerHome}/bin/sonar-scanner"
-     }
-   }
- }
-```
-
-Here are Jenkins's pipeline to integrating SonarQube in this moduls:
+Here are some examples for Jenkins's pipeline to integrating SonarQube:
 
 ```bash
  pipeline {
@@ -56,11 +40,12 @@ Here are Jenkins's pipeline to integrating SonarQube in this moduls:
         stage('Sonnar-Scanner') {
                 steps {
                         sh '''
-                        /root/sonar-scanner/sonar-scanner/bin/sonar-scanner \
+                        "your-sonarscanner-directory"
                         Dsonar.projectKey="your-key" \
                         Dsonar.sources=. \
                         Dsonar.host.url=http://localhost:9000/ \
                         Dsonar.login="your-token"
+                        Dsonar.qualitygate.wait=true
                         '''
                         }
  ...
