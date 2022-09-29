@@ -1,5 +1,7 @@
 # SonarQube Installation
 
+![sq-projects](../img/sq.png)
+
 This guide will help you to set up and configure SonarQube 8.9 LTS versions on Linux servers RedHat version 8. Follow the steps given below for the complete SonarQube configuration.
 
 ## SonarQube Requirements
