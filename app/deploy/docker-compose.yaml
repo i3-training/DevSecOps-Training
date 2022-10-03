@@ -5,7 +5,7 @@ services:
     build:
       context: ../
       dockerfile: deploy/Dockerfile
-    image: gosip-app:local
+    image: 10.8.60.126:5000/devsecops:v${BUILD_NUMBER}
     ports:
       - "10007:10007"
     volumes:
