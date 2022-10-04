@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gosip-staging-app
+spec:
+  selector:
+    matchLabels:
+      app: gosip-staging-app
+  template:
+    metadata:
+      labels:
+        app: gosip-staging-app
+    spec:
+      containers:
+      - name: gosip-staging-app
+        image: 10.8.60.126:5000/gosip-app:0.01
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "128m"
+          request:
+            memory: "128Mi"
+            cpu: "128m"
+        env:
+        - name: SECRET_KEY
+          value: secretkey
+        - name: MYSQL_USER
+          value: user
+        - name: MYSQL_PASSWORD
+          value: pass
+        - name: MYSQL_DB
+          value: a7db
+        - name: MYSQL_ENDPOINT
+          value: mysqldb-a7-stage
+        ports:
+        - containerPort: 10007
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gosip-staging-svc
+spec:
+  selector:
+    app: gosip-staging-app
+  ports:
+  - port: 80
+    targetPort: 10007
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: gosip-staging-route
+spec:
+  host: gosip-app-staging.apps.lab.i3datacenter.my.id 
+  port:
+    targetPort: 80
+  to:
+    kind: Service
+    name: gosip-staging-svc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gosip-staging-db
+spec:
+  selector:
+    matchLabels:
+      app: "gosip-staging-db"
+  template:
+    metadata:
+      labels:
+        app: gosip-staging-db
+    spec:
+      containers:
+      - name: mysqldb-a7
+        image: mariadb:10.6.3
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "128m"
+          request:
+            memory: "128Mi"
+            cpu: "128m"
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+        - name: MYSQL_USER
+          value: user
+        - name: MYSQL_PASSWORD
+          value: pass
+        - name: MYSQL_DB
+          value: a7db
+        ports:
+        - containerPort: 3307
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysqldb-a7-stage
+spec:
+  selector:
+    app: gosip-staging-db
+  ports:
+  - port: 3307
+    targetPort: 3307
