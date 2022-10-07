@@ -27,18 +27,18 @@ spec:
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:
-            name: staging-env-secret
-            key: database-user
+            name: gosip-cred
+            key: DB_USER
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-            name: staging-env-secret
-            key: database-password
+            name: gosip-cred
+            key: DB_PASS
         - name: MYSQL_DB
           valueFrom:
             secretKeyRef:
-            name: staging-env-secret
-            key:  database-name
+            name: gosip-cred
+            key: DB_NAME
         - name: MYSQL_ENDPOINT
           value: mysqldb-a7-staging
         ports:
