@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: gosip-staging-app
-        image: 10.8.60.126:5000/gosip-app:0.01
+        image: 10.8.60.123:5000/gosip-app:0.01
         resources:
           limits:
             memory: "128Mi"
