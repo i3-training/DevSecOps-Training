@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: staging-gosip-db
+spec:
+  selector:
+    matchLabels:
+      app: "staging-gosip-db"
+  template:
+    metadata:
+      labels:
+        app: staging-gosip-db
+    spec:
+      containers:
+      - name: mysqldb-a7-staging
+        image: mariadb:10.6.3
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "128m"
+          request:
+            memory: "128Mi"
+            cpu: "128m"
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+            name: staging-env-secret
+            key: database-root-password
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+            name: staging-env-secret
+            key: database-user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+            name: staging-env-secret
+            key: database-password
+        - name: MYSQL_DB
+          valueFrom:
+            secretKeyRef:
+            name: staging-env-secret
+            key:  database-name
+        ports:
+        - containerPort: 3307
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysqldb-a7-staging
+spec:
+  selector:
+    app: staging-gosip-db
+  ports:
+  - port: 3307
+    targetPort: 3307
