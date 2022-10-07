@@ -1,64 +1,62 @@
 pipeline {
     agent any
     stages {
-        // fetch contents of git repositories
-        stage('SCM Checkout') {
-            steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github-panca', url: 'https://github.com/pancaperkasa/jenkins-devsecops.git']]])
-            }
-        }
-        // run sonarqube in project
+//         stage("SCM Checkout"){
+//             steps{
+//                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github-panca', url: 'https://github.com/pancaperkasa/jenkins-devsecops.git']]])
+//             }
+//         }        
         stage('Sonnar-Scanner') {
             steps {
                     sh '''
                     cd app/
-                    /home/jenkins/sonar-scanner/sonar-scanner/bin/sonar-scanner \
-                    -Dsonar.projectKey="jenkins-devsecops" \
-                    -Dsonar.sources=. \
-                    -Dsonar.host.url=http://10.8.60.126:9000/ \
-                    -Dsonar.login="e1f735b437dd77262312033dfa83766cdbc3508c"
-                    -Dsonar.qualitygate.wait=true
+                    /home/jenkins/sonar-scanner/sonar-scanner/bin/sonar-scanner
                     '''
             }
         }
-        // used to check dockerfile
-        stage('Misconfig Scanner') {
-            steps {
+        // check docker file
+        stage("Misconfig Scanner"){
+            steps{
                 sh '''
                 cd app/
                 mkdir /var/www/html/trivy/pipeline${BUILD_NUMBER}/
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.html
-                trivy config . --format template --template "@deploy/html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.html --exit-code 1 --severity HIGH,CRITICAL
+                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.json
+                trivy config . -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.json
+                trivy config . --format template --template "@deploy/html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.html --exit-code 0 --severity HIGH,CRITICAL
                 '''
-            }
+            } 
         }
+
         stage('Create Image') {
             steps {
                 sh '''
-                docker image rm 10.8.60.126:5000/devsecops:v${BUILD_NUMBER} || echo "No existing image found"
-                docker build --no-cache -t 0.8.60.126:5000/devsecops:v${BUILD_NUMBER} -f app/deploy/Dockerfile
+                docker image rm 10.8.60.123:5000/devsecops:v${BUILD_NUMBER} || echo "No existing image found"
+                docker build --no-cache -t 10.8.60.123:5000/devsecops:v${BUILD_NUMBER} -f app/deploy/Dockerfile app/
                 '''
             }
         }
-        // used to scan image
-        stage('Vulnerability and Secret Scanner') {
-            steps {
+        // scan image
+        stage("Vulnerability and Secret Scanner"){
+            steps{
                 sh '''
                 cd app/deploy
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html
-                trivy image --format template --template "@html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html --exit-code 1 --severity HIGH,CRITICAL 10.8.60.126:5000/devsecops:v${BUILD_NUMBER}
+                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json
+                trivy image -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json 10.8.60.123:5000/devsecops:v${BUILD_NUMBER}
+                trivy image --format template --template "@html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html --exit-code 0 --severity HIGH,CRITICAL 10.8.60.123:5000/devsecops:v${BUILD_NUMBER} 
                 '''
             }
         }
-        // push to nexus repository
+
         stage('Push Image to nexus') {
             steps {
                 sh '''
                 set +x
-                docker login --username=admin --password=$nexusPassword 10.8.60.126:5000
+                docker login --username=$nexusUser --password=$nexusPassword 10.8.60.123:5000 
                 set -x
-                docker push 10.8.60.126:5000/devsecops:v${BUILD_NUMBER}
-                docker rmi 10.8.60.126:5000/devsecops:v${BUILD_NUMBER}
+                docker push 10.8.60.123:5000/devsecops:v${BUILD_NUMBER}
+                docker rmi 10.8.60.123:5000/devsecops:v${BUILD_NUMBER}
                 docker images
                 '''
             }
