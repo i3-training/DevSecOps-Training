@@ -25,23 +25,23 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-            name: staging-env-secret
-            key: database-root-password
+            name: gosip-cred
+            key: ROOT_PASS
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:
-            name: staging-env-secret
-            key: database-user
+            name: gosip-cred
+            key: DB_USER
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-            name: staging-env-secret
-            key: database-password
+            name: gosip-cred
+            key: DB_PASS
         - name: MYSQL_DB
           valueFrom:
             secretKeyRef:
-            name: staging-env-secret
-            key:  database-name
+            name: gosip-cred
+            key: DB_NAME
         ports:
         - containerPort: 3307
 ---
