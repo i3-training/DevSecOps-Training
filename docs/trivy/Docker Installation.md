@@ -1,6 +1,6 @@
 # Docker Installation
 
-![devops-toys](../images/dockerlogo-trivy.png)
+![docker-logo](../../images/dockerlogo-trivy.png)
 
 ## Install Docker Engine on RHEL
 

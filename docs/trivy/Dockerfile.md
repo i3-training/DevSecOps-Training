@@ -1,6 +1,6 @@
 # Dockerfile
 
-![devops-toys](../images/dockerfile-trivy.png)
+![dockerfile-logo](../../images/dockerfile-trivy.png)
 
 ## What is Dockerfile ?
 
