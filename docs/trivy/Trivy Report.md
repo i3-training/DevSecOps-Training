@@ -55,5 +55,5 @@ trivy image --format template --template "@html.tpl" -o /var/www/html/trivy//rep
 
 ![vuln-before](../../images/vulnbefore-trivy.png)
 </br> </br>
-![devops-toys](../images/vulnbefore1-trivy.png)
+![vuln-before1](../../images/vulnbefore1-trivy.png)
 Based on report analysis conducted by trivy, that Python:3.6 image has many vulnerabilities, and no secret key was found in the image. Trivy also discovered vulnerabilities in the libraries, modules, and packages themselves that were used when developing the project.
