@@ -1,6 +1,6 @@
 # Scan Image With Trivy
 
-![devops-toys](../images/trivy-logo.png)
+![devops-toys](../images/logo-trivy.png)
 
 ## Installation On RHEL
 
