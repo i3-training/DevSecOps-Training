@@ -25,7 +25,7 @@ By default, Trivy also detects unpatched/unfixed vulnerabilities. This means you
 
 Use --severity option to generate reports based on severity
 
-## Misconfig Scanner
+## Missconfiguration Scanner
 
 The Misconfig Scanner is used to scan the Dockerfile before the image is created, as the example below shows that the container must be run as a rootless container.
 Run the trivy misconfiguration scanner command in the app/ folder.
@@ -36,6 +36,18 @@ trivy config . --format template --template "@deploy/html.tpl" -o /var/www/html/
 ```
 
 ![missconfig-before](../../images/missconfigbefore-trivy.png)
+
+## Filesystem Scanner
+
+Filesystem scanner is used to scan files such as package.json and requirement.txt which contain modules, dependencies or libraries needed by a project.
+Run the trivy filesystem scanner command in the app/ folder.
+
+```bash
+# This is a command to ask trivy to scan with severity HIGH and CRITICAL, in which the report results are exported using the html.tpl template that has been prepared previously.
+trivy fs . --format template --template "@deploy/html.tpl" -o /var/www/html/trivy/reportfs.html --severity HIGH,CRITICAL
+```
+
+![missconfig-before](../../images/fsbefore-trivy.png)
 
 ## Build Image
 

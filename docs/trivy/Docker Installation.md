@@ -82,6 +82,6 @@ sudo systemctl status docker.service
 Verify that Docker Engine is installed correctly by running the hello-world image.
 
 ```bash
-sudo docker run hello-world
 #This command downloads a test image and runs it in a container. When the container runs, it prints a message and exits.
+sudo docker run hello-world
 ```
