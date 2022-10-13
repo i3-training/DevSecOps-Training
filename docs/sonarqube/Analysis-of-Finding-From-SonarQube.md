@@ -14,11 +14,11 @@ Discovered issues can either be a Bug, Vulnerability, Code Smell, Coverage or Du
 
 Clicking on the one of project name will take us to a dedicated dashboard where we can explore issues particular to the project in greater detail.
 
-![sq-projects](../images/farm-dboard.png)
+![sq-projects](../../images/farm-dboard.png)
 
 We can see the security hotspots, project code, activity, and perform administration tasks from the project dashboard – each available on a separate tab. Though there is a global issues tab, the issues tab on the project dashboard display issues specific to the project concerned alone:
 
-![sq-projects](../images/farm-issues.png)
+![sq-projects](../../images/farm-issues.png)
 
 The issues tab always display the category, severity level, tag(s), and the calculated effort (regarding time) it will take to recify an issue. From the issues tab, it's possible to assign an issue to another user, comment on it, and change its severity level. Clicking on the issue itself will show more detail about the issue. The issue tab comes with sophisticated filters to the left. These are good for pinpointing issues. User can find out if the codebase is healthy enough for deployment into production or not, that's what Quality Gate is for.
 
@@ -26,7 +26,7 @@ The issues tab always display the category, severity level, tag(s), and the calc
 
 A Quality Gate are the set of conditions a project must meet before it should be pushed to further environments. Quality Gates considers all of the quality metrics for a project and assigns a passed or failed designation for that project. It's possible to set a default Quality Gate which will be applied to all projects not explicitly assigned to some other gate.
 
-![sq-projects](../images/farm-qgates.png)
+![sq-projects](../../images/farm-qgates.png)
 
 A default quality gates from SonarQube is already there. Administrators can also create new custom Quality Gates and set the values inside.
 
