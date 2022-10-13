@@ -8,7 +8,7 @@ SonarQube is divided into four components. These components are SonarQube server
 
 Now that we've analyzed our first project, we can go to the web interface at http://localhost:9000/. There we will see the report summary :
 
-![sq-projects](../images/projects-page.png)
+![sq-projects](../../images/projects-page.png)
 
 Discovered issues can either be a Bug, Vulnerability, Code Smell, Coverage or Duplication. Each category has a corresponding number of issues or a precentage value. Moreover, issues can have one of five different severity levels: blocker, critical, major, minor, and info. Just in front of the project name is an icon that display the Quality Gate status - passed (green) or failed (red).
 
