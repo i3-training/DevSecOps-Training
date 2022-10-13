@@ -1,11 +1,6 @@
 pipeline {
     agent any
     stages {
-//         stage("SCM Checkout"){
-//             steps{
-//                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github-panca', url: 'https://github.com/pancaperkasa/jenkins-devsecops.git']]])
-//             }
-//         }        
         stage('Sonnar-Scanner') {
             steps {
                     sh '''
@@ -14,9 +9,8 @@ pipeline {
                     '''
             }
         }
-        // check docker file
-        stage("Misconfig Scanner"){
-            steps{
+        stage('Misconfig Scanner') {
+            steps {
                 sh '''
                 cd app/
                 mkdir /var/www/html/trivy/pipeline${BUILD_NUMBER}/
@@ -25,9 +19,20 @@ pipeline {
                 trivy config . -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.json
                 trivy config . --format template --template "@deploy/html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.html --exit-code 0 --severity HIGH,CRITICAL
                 '''
-            } 
+            }
         }
-
+        // scan filesystem such package.json and requirements.txt
+        stage('Filesystem Scanner') {
+            steps {
+                sh '''
+                cd app/
+                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.html
+                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.json
+                trivy fs . -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.json
+                trivy fs . --format template --template "@deploy/html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.html --exit-code 0 --severity HIGH,CRITICAL
+                '''
+            }
+        }
         stage('Create Image') {
             steps {
                 sh '''
@@ -36,15 +41,14 @@ pipeline {
                 '''
             }
         }
-        // scan image
-        stage("Vulnerability and Secret Scanner"){
-            steps{
+        stage('Vulnerability and Secret Scanner') {
+            steps {
                 sh '''
                 cd app/deploy
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json
                 trivy image -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json 10.8.60.123:5000/devsecops:v${BUILD_NUMBER}
-                trivy image --format template --template "@html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html --exit-code 0 --severity HIGH,CRITICAL 10.8.60.123:5000/devsecops:v${BUILD_NUMBER} 
+                trivy image --format template --template "@html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html --exit-code 0 --severity HIGH,CRITICAL 10.8.60.123:5000/devsecops:v${BUILD_NUMBER}
                 '''
             }
         }
@@ -53,7 +57,7 @@ pipeline {
             steps {
                 sh '''
                 set +x
-                docker login --username=$nexusUser --password=$nexusPassword 10.8.60.123:5000 
+                docker login --username=$nexusUser --password=$nexusPassword 10.8.60.123:5000
                 set -x
                 docker push 10.8.60.123:5000/devsecops:v${BUILD_NUMBER}
                 docker rmi 10.8.60.123:5000/devsecops:v${BUILD_NUMBER}
@@ -61,12 +65,22 @@ pipeline {
                 '''
             }
         }
-        stage('Run the docker compose') {
+        stage('Zap Proxy') {
             steps {
-                sh '''
-                docker-compose -f app/deploy/docker-compose.yaml stop
-                docker-compose -f app/deploy/docker-compose.yaml up -d
-                '''
+                    sh '''
+                    docker run --rm -v /zap:/zap/wrk:rw -v /opt/hosts_zap:/etc/hosts -t ictu/zap2docker-weekly zap-baseline.py -I -j \
+                    -t http://gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id/ \
+                    -r reportzap.html \
+                    -J reportzap.json \
+                    -g reportzap.conf \
+                    --hook=/zap/auth_hook.py \
+                    -z "auth.loginurl=http://gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id/login \
+                        auth.username="user" \
+                        auth.password="password""
+                    mkdir /var/www/html/zapReport/pipeline${BUILD_NUMBER}/
+                    cp /zap/* /var/www/html/zapReport/pipeline${BUILD_NUMBER}/
+                    rm -rf /zap/*
+                    '''
             }
         }
     }
