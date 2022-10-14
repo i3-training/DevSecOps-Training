@@ -51,7 +51,7 @@ Writing results to /root/zap/reportzap.html
 973452 [ZAP-daemon] INFO  org.zaproxy.zap.DaemonBootstrap - ZAP is now listening on localhost:8080
 ```
 
-And we can terminated it with Ctrl + C.
+And we can terminated it with ```Ctrl + C```.
 
 ## Scan With Docker
 - Pull Image ictu/zap2docker-weekly
