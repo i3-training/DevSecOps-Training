@@ -1,9 +1,9 @@
-#OWASP ZAP
+# OWASP ZAP
 
-##What is ZAP?
+## What is ZAP?
 Open Web Application Security Project (OWASP) Zed Attack Proxy (ZAP) is an open-source and free penetration testing tool.
 
-##Install ZAP on RHEL 8
+## Install ZAP on RHEL 8
 - Download ZAP
 ```bash
 wget https://github.com/zaproxy/zaproxy/releases/download/v2.11.1/ZAP_2_11_1_unix.sh
@@ -21,7 +21,7 @@ zap.sh -help
 
 - Finish.
 
-##Set IP Target
+## Set IP Target
 - Before we start scanning using ZAP, we must set the IP hosts because the DNS isn't public
 ```bash
 vim /etc/hosts
@@ -32,7 +32,7 @@ vim /etc/hosts
 10.8.60.50 gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id bodgeit-intern-devsecops-dev.apps.lab.i3datacenter.my.id
 ```
 
-##Scan With ZAP
+## Scan With ZAP
 ```bash
 zap.sh -daemon -quickurl http://bodgeit-intern-devsecops-dev.apps.lab.i3datacenter.my.id -quickout $(pwd)/report.html
 ```
@@ -52,7 +52,7 @@ Writing results to /root/zap/reportzap.html
 
 And we can terminated it with Ctrl + C.
 
-##Scan With Docker
+## Scan With Docker
 - Pull Image ictu/zap2docker-weekly
 ```bash
 docker pull ictu/zap2docker-weekly
@@ -69,7 +69,7 @@ vim /opt/hosts_zap
 10.8.60.50 gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id
 ```
 
-###Baseline Scan
+### Baseline Scan
 Baseline scan is a time limited spider (by default, 1 minute) which reports issues of the passive scanning.
 
 - Usage
@@ -99,7 +99,7 @@ WARN-NEW: Cookie without SameSite Attribute [10054] x 2
 FAIL-NEW: 0     FAIL-INPROG: 0  WARN-NEW: 4     WARN-INPROG: 0  INFO: 0 IGNORE: 0       PASS: 29
 ```
 
-###Full Scan
+### Full Scan
 Full scan is a full spider (by default, no time limit) which reports issues of the full active scanning and passive scanning.
 
 - Usage
@@ -129,7 +129,7 @@ WARN-NEW: Cookie without SameSite Attribute [10054] x 2
 FAIL-NEW: 0     FAIL-INPROG: 0  WARN-NEW: 4     WARN-INPROG: 0  INFO: 0 IGNORE: 0       PASS: 52
 ```
 
-###API Scan
+### API Scan
 API scan is a full scan agains API defined using OpenAPI/Swagger or SOAP.
 
 - Install addons soap & openapi
