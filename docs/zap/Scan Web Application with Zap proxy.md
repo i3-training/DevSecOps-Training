@@ -36,11 +36,12 @@ vim /etc/hosts
 ```bash
 zap.sh -daemon -quickurl http://bodgeit-intern-devsecops-dev.apps.lab.i3datacenter.my.id -quickout $(pwd)/report.html
 ```
-
-Note : 
+```
+#Note :
 -daemon                 : Starts ZAP in daemon mode, i.e. without a UI
 -quickurl <target url>  : The URL to attack
 -quickout <filename>    : The file to write the HTML/JSON/MD/XML results to (based on the file extension)
+```
 
 Once scanning success, it should look like the following :
 ```bash
@@ -58,7 +59,7 @@ And we can terminated it with Ctrl + C.
 docker pull ictu/zap2docker-weekly
 ```
 
-###Set IP in container
+### Set IP in container
 - Create a hosts file that will replace the original container hosts
 ```bash
 vim /opt/hosts_zap
