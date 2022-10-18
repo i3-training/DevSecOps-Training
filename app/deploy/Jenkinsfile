@@ -1,0 +1,22 @@
+pipeline {
+    agent any
+    stages {
+        stage('Sonnar-Scanner') {
+            steps {
+                    sh '''
+                    cd app/deploy/manifest
+                    ls -la
+                    '''
+            }
+        }
+        stage('Deploy OCP Sage') {
+            steps {
+                    sh '''
+                    oc login -u $ocpUser -p $ocpPassword --server=https://api.lab.i3datacenter.my.id:6443
+                    oc whoami
+                    oc project $ocpProject
+                    '''
+            }
+        }
+    }
+}
