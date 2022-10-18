@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: staging-gosip-app
-        image: 10.8.60.126:5000/gosip-app:0.01
+        image: 10.8.60.123:5000/gosip-app:0.01
         resources:
           limits:
             memory: "128Mi"
@@ -22,25 +22,25 @@ spec:
             memory: "128Mi"
             cpu: "128m"
         env:
-        - name: SECRET_KEY
-          value: secretkey
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:
-            name: gosip-cred
-            key: DB_USER
+                name: mysqldb-a8
+                key: database-user
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-            name: gosip-cred
-            key: DB_PASS
+                name: mysqldb-a8
+                key: database-password
         - name: MYSQL_DB
           valueFrom:
             secretKeyRef:
-            name: gosip-cred
-            key: DB_NAME
+                name: mysqldb-a8
+                key: database-name
         - name: MYSQL_ENDPOINT
-          value: mysqldb-a7-staging
+          value: mysqldb-a8
+        - name: SECRET_KEY
+          value: secretkey
         ports:
         - containerPort: 10007
 ---
@@ -60,7 +60,7 @@ kind: Route
 metadata:
   name: gosip-staging-route
 spec:
-  host: gosip-app-staging.apps.lab.i3datacenter.my.id 
+  host: gosip-app-staging1.apps.lab.i3datacenter.my.id 
   port:
     targetPort: 80
   to:
