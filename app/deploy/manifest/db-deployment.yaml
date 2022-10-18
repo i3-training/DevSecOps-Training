@@ -23,32 +23,20 @@ spec:
             cpu: "128m"
         env:
         - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-            name: gosip-cred
-            key: ROOT_PASS
+          value: root
         - name: MYSQL_USER
-          valueFrom:
-            secretKeyRef:
-            name: gosip-cred
-            key: DB_USER
+          value: user
         - name: MYSQL_PASSWORD
-          valueFrom:
-            secretKeyRef:
-            name: gosip-cred
-            key: DB_PASS
+          value: pass
         - name: MYSQL_DB
-          valueFrom:
-            secretKeyRef:
-            name: gosip-cred
-            key: DB_NAME
+          value: a7db
         ports:
         - containerPort: 3307
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysqldb-a7-staging
+  name: mysqldb-a8
 spec:
   selector:
     app: staging-gosip-db
