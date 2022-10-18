@@ -9,14 +9,23 @@ pipeline {
                     '''
             }
         }
-        stage('Check ocp status') {
+        stage('Deploy app') {
             steps {
                     sh '''
+                    cd app/deploy/manifest
                     ls -la
                     oc login -u $ocpUser -p $ocpPassword --server=https://api.lab.i3datacenter.my.id:6443
-                    oc whoami
                     oc project $ocpProject
-                    oc project
+                    oc create -f app-deployment.yaml
+                    '''
+            }
+        }
+        stage('Check app') {
+            steps {
+                    sh '''
+                    oc get pod
+                    oc get svc
+                    oc get route
                     '''
             }
         }

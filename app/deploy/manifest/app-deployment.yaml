@@ -25,20 +25,20 @@ spec:
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:
-                name: mysqldb-a8
+                name: mysqldb-a6
                 key: database-user
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-                name: mysqldb-a8
+                name: mysqldb-a6
                 key: database-password
         - name: MYSQL_DB
           valueFrom:
             secretKeyRef:
-                name: mysqldb-a8
+                name: mysqldb-a6
                 key: database-name
         - name: MYSQL_ENDPOINT
-          value: mysqldb-a8
+          value: mysqldb-a6
         - name: SECRET_KEY
           value: secretkey
         ports:
