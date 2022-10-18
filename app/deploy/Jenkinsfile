@@ -1,7 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage('Sonnar-Scanner') {
+        stage('Check manifest file') {
             steps {
                     sh '''
                     cd app/deploy/manifest
@@ -9,12 +9,14 @@ pipeline {
                     '''
             }
         }
-        stage('Deploy OCP Sage') {
+        stage('Check ocp status') {
             steps {
                     sh '''
+                    ls -la
                     oc login -u $ocpUser -p $ocpPassword --server=https://api.lab.i3datacenter.my.id:6443
                     oc whoami
                     oc project $ocpProject
+                    oc project
                     '''
             }
         }
