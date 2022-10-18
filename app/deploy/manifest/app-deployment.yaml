@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: staging-gosip-app
+spec:
+  selector:
+    matchLabels:
+      app: staging-gosip-app
+  template:
+    metadata:
+      labels:
+        app: staging-gosip-app
+    spec:
+      containers:
+      - name: staging-gosip-app
+        image: 10.8.60.123:5000/gosip-app:0.01
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "128m"
+          request:
+            memory: "128Mi"
+            cpu: "128m"
+        env:
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+                name: mysqldb-a8
+                key: database-user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+                name: mysqldb-a8
+                key: database-password
+        - name: MYSQL_DB
+          valueFrom:
+            secretKeyRef:
+                name: mysqldb-a8
+                key: database-name
+        - name: MYSQL_ENDPOINT
+          value: mysqldb-a8
+        - name: SECRET_KEY
+          value: secretkey
+        ports:
+        - containerPort: 10007
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: staging-gosip-svc
+spec:
+  selector:
+    app: staging-gosip-app
+  ports:
+  - port: 80
+    targetPort: 10007
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: gosip-staging-route
+spec:
+  host: gosip-app-staging1.apps.lab.i3datacenter.my.id 
+  port:
+    targetPort: 80
+  to:
+    kind: Service
+    name: gosip-staging-svc
