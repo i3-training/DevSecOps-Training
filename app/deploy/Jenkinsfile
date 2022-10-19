@@ -1,6 +1,26 @@
 pipeline {
     agent any
     stages {
+        stage('Setup parameters') {
+            steps {
+                script {
+                    properties([
+                        parameters([
+                            password(
+                                defaultValue: 'admin',
+                                description: 'User for nexus',
+                                name:'nexusUser'
+                            ),
+                            password(
+                                defaultValue: 'sharkdevsecops1',
+                                description: 'Password for nexus',
+                                name:'nexusPassword'
+                            )
+                        ])
+                    ])
+                }
+            }
+        }
         stage('Sonnar-Scanner') {
             steps {
                     sh '''
