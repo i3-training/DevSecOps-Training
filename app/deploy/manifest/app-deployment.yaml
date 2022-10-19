@@ -25,20 +25,20 @@ spec:
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:
-                name: mysqldb-a6
+                name: mysqldb-dev
                 key: database-user
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-                name: mysqldb-a6
+                name: mysqldb-dev
                 key: database-password
         - name: MYSQL_DB
           valueFrom:
             secretKeyRef:
-                name: mysqldb-a6
+                name: mysqldb-dev
                 key: database-name
         - name: MYSQL_ENDPOINT
-          value: mysqldb-a6
+          value: mysqldb-dev
         - name: SECRET_KEY
           value: secretkey
         ports:
