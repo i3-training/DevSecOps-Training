@@ -5,7 +5,6 @@ deployment prerequisites.
 - [ ] Project / namespace for dev and prod
 - [ ] Pull secret to the image
 - [ ] database
-- [ ] 
 
 ## 1. Create Project/Namespace
 
@@ -38,6 +37,10 @@ oc secrets link default <pullsecret-name> --for=pull
 
 create new database to be used by the app
 
+```bash
+oc adm policy add-scc-to-user anyuid -z default
+```
+
 Deploy db on dev project
 
 ```bash
@@ -54,8 +57,4 @@ oc new-app --template=mariadb-ephemeral \
 -p MYSQL_USER=user -p MYSQL_PASSWORD=pass \
 -p MYSQL_ROOT_PASSWORD=root -p MYSQL_DATABASE=a7db \
 -p MEMORY_LIMIT=256Mi -p DATABASE_SERVICE_NAME=mysqldb-prod
-```
-
-```bash
-oc adm policy add-scc-to-user anyuid -z default
 ```
