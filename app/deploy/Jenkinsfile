@@ -16,13 +16,14 @@ pipeline {
                     ls -la
                     oc login -u $ocpUser -p $ocpPassword --server=https://api.lab.i3datacenter.my.id:6443
                     oc project $ocpProject
-                    oc create -f app-deployment.yaml
+                    oc create -f $manifestFile
                     '''
             }
         }
         stage('Check app') {
             steps {
                     sh '''
+                    sleep 30s
                     oc get pod
                     oc get svc
                     oc get route
