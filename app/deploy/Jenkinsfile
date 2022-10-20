@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    parameter {
+    parameters {
         string(name: 'nexusServer', defaultValue: '10.8.60.123:5000', description: 'Image Registry address')
         string(name: 'nexusUser', defaultValue: 'jenkins', description: 'Image Registry username')
         string(name: 'nexusPassword', defaultValue: 'jenkinspass', description: 'Image Registry Password')
