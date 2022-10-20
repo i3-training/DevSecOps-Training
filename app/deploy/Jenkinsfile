@@ -46,8 +46,8 @@ pipeline {
         stage('Create Image') {
             steps {
                 sh '''
-                docker image rm 10.8.60.123:5000/devsecops:v${BUILD_NUMBER} || echo "No existing image found"
-                docker build --no-cache -t 10.8.60.123:5000/devsecops:v${BUILD_NUMBER} -f app/deploy/Dockerfile app/
+                docker image rm ${params.nexusServer}/devsecops:v${BUILD_NUMBER} || echo "No existing image found"
+                docker build --no-cache -t ${params.nexusServer}/devsecops:v${BUILD_NUMBER} -f app/deploy/Dockerfile app/
                 '''
             }
         }
@@ -57,8 +57,8 @@ pipeline {
                 cd app/deploy
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json
-                trivy image -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json 10.8.60.123:5000/devsecops:v${BUILD_NUMBER}
-                trivy image --format template --template "@html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html --exit-code 0 --severity HIGH,CRITICAL 10.8.60.123:5000/devsecops:v${BUILD_NUMBER}
+                trivy image -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
+                trivy image --format template --template "@html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html --exit-code 0 --severity HIGH,CRITICAL ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
                 '''
             }
         }
@@ -67,10 +67,10 @@ pipeline {
             steps {
                 sh '''
                 set +x
-                docker login --username=$nexusUser --password=$nexusPassword 10.8.60.123:5000
+                docker login --username=${params.nexusUser} --password=${params.nexusPassword} ${params.nexusServer}
                 set -x
-                docker push 10.8.60.123:5000/devsecops:v${BUILD_NUMBER}
-                docker rmi 10.8.60.123:5000/devsecops:v${BUILD_NUMBER}
+                docker push ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
+                docker rmi ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
                 docker images
                 '''
             }
@@ -80,9 +80,9 @@ pipeline {
                     sh '''
                     cd app/deploy/manifest
                     ls -la
-                    oc login -u $ocpUser -p $ocpPassword --server=https://api.lab.i3datacenter.my.id:6443
-                    oc project $ocpProject
-                    oc create -f $manifestFile
+                    oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443
+                    oc project ${params.ocpProject}
+                    oc create -f ${params.manifestFile}
                     sleep 30s
                     oc get pod
                     oc get svc
@@ -94,12 +94,12 @@ pipeline {
             steps {
                     sh '''
                     docker run --rm -v /zap:/zap/wrk:rw -v /opt/hosts_zap:/etc/hosts -t ictu/zap2docker-weekly zap-baseline.py -I -j \
-                    -t http://gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id/ \
+                    -t ${params.appEndpoint} \
                     -r reportzap.html \
                     -J reportzap.json \
                     -g reportzap.conf \
                     --hook=/zap/auth_hook.py \
-                    -z "auth.loginurl=http://gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id/login \
+                    -z "auth.loginurl=${params.appEndpoint}/login \
                         auth.username="user" \
                         auth.password="password""
                     mkdir /var/www/html/zapReport/pipeline${BUILD_NUMBER}/
@@ -113,9 +113,9 @@ pipeline {
                     sh '''
                     cd app/deploy/manifest
                     ls -la
-                    oc login -u $ocpUser -p $ocpPassword --server=https://api.lab.i3datacenter.my.id:6443
-                    oc project $ocpProject
-                    oc create -f $manifestFile
+                    oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443
+                    oc project ${params.ocpProject}
+                    oc create -f ${params.manifestFile}
                     sleep 30s
                     oc get pod
                     oc get svc
