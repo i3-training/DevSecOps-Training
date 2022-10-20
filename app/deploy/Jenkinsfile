@@ -1,11 +1,30 @@
 pipeline {
     agent any
+    parameters {
+        string(name: 'nexusServer', defaultValue: '10.8.60.123:5000', description: 'Image Registry address')
+        string(name: 'nexusUser', defaultValue: 'jenkins', description: 'Image Registry username')
+        string(name: 'nexusPassword', defaultValue: 'jenkinspass', description: 'Image Registry Password')
+        choice(name: 'appEndpoint', choices: ['gosip-app-prod.apps.lab.i3datacenter.my.id', 'gosip-app-dev.apps.lab.i3datacenter.my.id'], description: 'App endpoint for zap to scan')
+        string(name: 'ocpUser', defaultValue: 'jenkins', description: 'Openshift username')
+        string(name: 'ocpPassword', defaultValue: 'sharkdevsecops1', description: 'Openshift user password')
+        choice(name: 'ocpProject', choices: ['intern-devsecops-dev', 'intern-devsecops-prod', 'intern-devsecops-stage'], description: 'env where app to be deployed')
+        choice(name: 'manifestFile', choices: ['dev-deployment.yaml', 'prod-deployment.yaml'], description: 'env where app to be deployed')
+    }
     stages {
         stage('Check manifest file') {
             steps {
                     sh '''
                     cd app/deploy/manifest
                     ls -la
+                    echo ${params.nexusServer}
+                    echo ${params.nexusUser}
+                    echo ${params.nexusPassword}
+                    echo ${params.appEndpoint}
+                    echo ${params.ocpUser}
+                    echo ${params.ocpPassword}
+                    echo ${params.ocpProject}
+                    echo ${params.manifestFile}
+                    echo ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
                     '''
             }
         }
