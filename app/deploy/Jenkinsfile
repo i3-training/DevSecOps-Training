@@ -13,71 +13,71 @@ pipeline {
     stages {
         stage('Sonnar-Scanner') {
             steps {
-                    sh '''
+                    sh """
                     cd app/
                     /home/jenkins/sonar-scanner/sonar-scanner/bin/sonar-scanner
-                    '''
+                    """
             }
         }
         stage('Misconfig Scanner') {
             steps {
-                sh '''
+                sh """
                 cd app/
                 mkdir /var/www/html/trivy/pipeline${BUILD_NUMBER}/
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.html
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.json
                 trivy config . -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.json
                 trivy config . --format template --template "@deploy/html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.html --exit-code 0 --severity HIGH,CRITICAL
-                '''
+                """
             }
         }
         // scan filesystem such package.json and requirements.txt
         stage('Filesystem Scanner') {
             steps {
-                sh '''
+                sh """
                 cd app/
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.html
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.json
                 trivy fs . -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.json
                 trivy fs . --format template --template "@deploy/html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.html --exit-code 0 --severity HIGH,CRITICAL
-                '''
+                """
             }
         }
         stage('Create Image') {
             steps {
-                sh '''
+                sh """
                 docker image rm ${params.nexusServer}/devsecops:v${BUILD_NUMBER} || echo "No existing image found"
                 docker build --no-cache -t ${params.nexusServer}/devsecops:v${BUILD_NUMBER} -f app/deploy/Dockerfile app/
-                '''
+                """
             }
         }
         stage('Vulnerability and Secret Scanner') {
             steps {
-                sh '''
+                sh """
                 cd app/deploy
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json
                 trivy image -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
                 trivy image --format template --template "@html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html --exit-code 0 --severity HIGH,CRITICAL ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
-                '''
+                """
             }
         }
 
         stage('Push Image to nexus') {
             steps {
-                sh '''
+                sh """
                 set +x
                 docker login --username=${params.nexusUser} --password=${params.nexusPassword} ${params.nexusServer}
                 set -x
                 docker push ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
                 docker rmi ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
                 docker images
-                '''
+                """
             }
         }
         stage('Deploy app to dev env') {
             steps {
-                    sh '''
+                    sh """
                     cd app/deploy/manifest
                     ls -la
                     oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443
@@ -87,12 +87,12 @@ pipeline {
                     oc get pod
                     oc get svc
                     oc get route
-                    '''
+                    """
             }
         }
         stage('Zap Proxy') {
             steps {
-                    sh '''
+                    sh """
                     docker run --rm -v /zap:/zap/wrk:rw -v /opt/hosts_zap:/etc/hosts -t ictu/zap2docker-weekly zap-baseline.py -I -j \
                     -t ${params.appEndpoint} \
                     -r reportzap.html \
@@ -105,12 +105,12 @@ pipeline {
                     mkdir /var/www/html/zapReport/pipeline${BUILD_NUMBER}/
                     cp /zap/* /var/www/html/zapReport/pipeline${BUILD_NUMBER}/
                     rm -rf /zap/*
-                    '''
+                    """
             }
         }
         stage('Deploy app to Prod env') {
             steps {
-                    sh '''
+                    sh """
                     cd app/deploy/manifest
                     ls -la
                     oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443
@@ -120,7 +120,7 @@ pipeline {
                     oc get pod
                     oc get svc
                     oc get route
-                    '''
+                    """
             }
         }
     }
