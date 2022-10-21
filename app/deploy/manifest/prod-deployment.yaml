@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: staging-gosip-app
+  name: gosip-app-prod
 spec:
   selector:
     matchLabels:
-      app: staging-gosip-app
+      app: gosip-app-prod
   template:
     metadata:
       labels:
-        app: staging-gosip-app
+        app: gosip-app-prod
     spec:
       containers:
-      - name: staging-gosip-app
+      - name: gosip-app-prod
         image: 10.8.60.123:5000/gosip-app:0.01
         resources:
           limits:
@@ -25,20 +25,20 @@ spec:
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:
-                name: mysqldb-a8
+                name: mysqldb-prod
                 key: database-user
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-                name: mysqldb-a8
+                name: mysqldb-prod
                 key: database-password
         - name: MYSQL_DB
           valueFrom:
             secretKeyRef:
-                name: mysqldb-a8
+                name: mysqldb-prod
                 key: database-name
         - name: MYSQL_ENDPOINT
-          value: mysqldb-a8
+          value: mysqldb-prod
         - name: SECRET_KEY
           value: secretkey
         ports:
@@ -47,10 +47,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: staging-gosip-svc
+  name: gosip-prod-svc
 spec:
   selector:
-    app: staging-gosip-app
+    app: gosip-app-prod
   ports:
   - port: 80
     targetPort: 10007
@@ -58,11 +58,11 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: gosip-staging-route
+  name: gosip-prod-route
 spec:
-  host: gosip-app-staging1.apps.lab.i3datacenter.my.id 
+  host: gosip-app-prod.apps.lab.i3datacenter.my.id 
   port:
     targetPort: 80
   to:
     kind: Service
-    name: gosip-staging-svc
+    name: gosip-prod-svc
