@@ -96,12 +96,12 @@ pipeline {
             steps {
                     sh """
                     docker run --rm -v /zap:/zap/wrk:rw -v /opt/hosts_zap:/etc/hosts -t ictu/zap2docker-weekly zap-baseline.py -I -j \
-                    -t ${params.appEndpoint} \
+                    -t http://${params.appEndpoint} \
                     -r reportzap.html \
                     -J reportzap.json \
                     -g reportzap.conf \
                     --hook=/zap/auth_hook.py \
-                    -z "auth.loginurl=${params.appEndpoint}/login \
+                    -z "auth.loginurl=http://${params.appEndpoint}/login \
                         auth.username="user" \
                         auth.password="password""
                     mkdir /var/www/html/zapReport/pipeline${BUILD_NUMBER}/
