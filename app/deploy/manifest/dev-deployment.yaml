@@ -47,7 +47,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: gosip-dev-svc
+  name: gosip-app-dev-svc
+  labels:
+    app: gosip-app-dev
 spec:
   selector:
     app: gosip-app-dev
@@ -60,11 +62,11 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: gosip-staging-route
+  name: gosip-app-dev-route
 spec:
   host: gosip-app-dev.apps.lab.i3datacenter.my.id 
   port:
     targetPort: gosip-dev-TCP
   to:
     kind: Service
-    name: gosip-dev-svc
+    name: gosip-app-dev-svc
