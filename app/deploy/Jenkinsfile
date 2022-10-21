@@ -9,6 +9,8 @@ pipeline {
         string(name: 'ocpPassword', defaultValue: 'sharkdevsecops1', description: 'Openshift user password')
         choice(name: 'ocpProject', choices: ['intern-devsecops-dev', 'intern-devsecops-prod', 'intern-devsecops-stage'], description: 'env where app to be deployed')
         choice(name: 'manifestFile', choices: ['dev-deployment.yaml', 'prod-deployment.yaml'], description: 'env where app to be deployed')
+        choice(name: 'ocpProjectProd', defaultValue: 'intern-devsecops-prod', description: 'env where app to be deployed')
+        choice(name: 'manifestFileProd', defaultValue: 'prod-deployment.yaml', description: 'env where app to be deployed')
     }
     stages {
         stage('Sonnar-Scanner') {
@@ -114,8 +116,8 @@ pipeline {
                     cd app/deploy/manifest
                     ls -la
                     oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443
-                    oc project ${params.ocpProject}
-                    oc create -f ${params.manifestFile}
+                    oc project ${params.ocpProjectProd}
+                    oc create -f ${params.manifestFileProd}
                     sleep 30s
                     oc get pod
                     oc get svc
