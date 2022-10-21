@@ -11,42 +11,19 @@ pipeline {
         choice(name: 'manifestFile', choices: ['dev-deployment.yaml', 'prod-deployment.yaml'], description: 'env where app to be deployed')
     }
     stages {
-        stage('Check manifest file') {
+        stage('Check Parameters') {
             steps {
-                    sh '''
-                    cd app/deploy/manifest
-                    ls -la
-                    echo ${params.nexusServer}
-                    echo ${params.nexusUser}
-                    echo ${params.nexusPassword}
-                    echo ${params.appEndpoint}
-                    echo ${params.ocpUser}
-                    echo ${params.ocpPassword}
-                    echo ${params.ocpProject}
-                    echo ${params.manifestFile}
-                    echo ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
-                    '''
-            }
-        }
-        stage('Deploy app') {
-            steps {
-                    sh '''
-                    cd app/deploy/manifest
-                    ls -la
-                    oc login -u $ocpUser -p $ocpPassword --server=https://api.lab.i3datacenter.my.id:6443
-                    oc project $ocpProject
-                    oc create -f $manifestFile
-                    '''
-            }
-        }
-        stage('Check app') {
-            steps {
-                    sh '''
-                    sleep 30s
-                    oc get pod
-                    oc get svc
-                    oc get route
-                    '''
+                sh """
+                echo ${params.nexusServer}
+                echo ${params.nexusUser}
+                echo ${params.nexusPassword}
+                echo ${params.appEndpoint}
+                echo ${params.ocpUser}
+                echo ${params.ocpPassword}
+                echo ${params.ocpProject}
+                echo ${params.manifestFile}
+                echo ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
+                """
             }
         }
     }
