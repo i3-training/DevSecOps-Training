@@ -9,21 +9,120 @@ pipeline {
         string(name: 'ocpPassword', defaultValue: 'sharkdevsecops1', description: 'Openshift user password')
         choice(name: 'ocpProject', choices: ['intern-devsecops-dev', 'intern-devsecops-prod', 'intern-devsecops-stage'], description: 'env where app to be deployed')
         choice(name: 'manifestFile', choices: ['dev-deployment.yaml', 'prod-deployment.yaml'], description: 'env where app to be deployed')
+        string(name: 'ocpProjectProd', defaultValue: 'intern-devsecops-prod', description: 'env where app to be deployed')
+        string(name: 'manifestFileProd', defaultValue: 'prod-deployment.yaml', description: 'env where app to be deployed')
     }
     stages {
-        stage('Check Parameters') {
+        stage('Sonnar-Scanner') {
+            steps {
+                    sh """
+                    cd app/
+                    /home/jenkins/sonar-scanner/sonar-scanner/bin/sonar-scanner
+                    """
+            }
+        }
+        stage('Misconfig Scanner') {
             steps {
                 sh """
-                echo ${params.nexusServer}
-                echo ${params.nexusUser}
-                echo ${params.nexusPassword}
-                echo ${params.appEndpoint}
-                echo ${params.ocpUser}
-                echo ${params.ocpPassword}
-                echo ${params.ocpProject}
-                echo ${params.manifestFile}
-                echo ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
+                cd app/
+                mkdir /var/www/html/trivy/pipeline${BUILD_NUMBER}/
+                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.html
+                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.json
+                trivy config . -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.json
+                trivy config . --format template --template "@deploy/html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.html --exit-code 0 --severity HIGH,CRITICAL
                 """
+            }
+        }
+        // scan filesystem such package.json and requirements.txt
+        stage('Filesystem Scanner') {
+            steps {
+                sh """
+                cd app/
+                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.html
+                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.json
+                trivy fs . -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.json
+                trivy fs . --format template --template "@deploy/html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.html --exit-code 0 --severity HIGH,CRITICAL
+                """
+            }
+        }
+        stage('Create Image') {
+            steps {
+                sh """
+                docker image rm ${params.nexusServer}/devsecops:v${BUILD_NUMBER} || echo "No existing image found"
+                docker build --no-cache -t ${params.nexusServer}/devsecops:v${BUILD_NUMBER} -f app/deploy/Dockerfile app/
+                """
+            }
+        }
+        stage('Vulnerability and Secret Scanner') {
+            steps {
+                sh """
+                cd app/deploy
+                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html
+                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json
+                trivy image -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
+                trivy image --format template --template "@html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html --exit-code 0 --severity HIGH,CRITICAL ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
+                """
+            }
+        }
+
+        stage('Push Image to nexus') {
+            steps {
+                sh """
+                set +x
+                docker login --username=${params.nexusUser} --password=${params.nexusPassword} ${params.nexusServer}
+                set -x
+                docker push ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
+                docker rmi ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
+                docker images
+                """
+            }
+        }
+        stage('Deploy app to dev env') {
+            steps {
+                    sh """
+                    cd app/deploy/manifest
+                    ls -la
+                    oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443
+                    oc project ${params.ocpProject}
+                    oc create -f ${params.manifestFile}
+                    sleep 30s
+                    oc get pod
+                    oc get svc
+                    oc get route
+                    """
+            }
+        }
+        stage('Zap Proxy') {
+            steps {
+                    sh """
+                    docker run --rm -v /zap:/zap/wrk:rw -v /opt/hosts_zap:/etc/hosts -t ictu/zap2docker-weekly zap-baseline.py -I -j \
+                    -t ${params.appEndpoint} \
+                    -r reportzap.html \
+                    -J reportzap.json \
+                    -g reportzap.conf \
+                    --hook=/zap/auth_hook.py \
+                    -z "auth.loginurl=${params.appEndpoint}/login \
+                        auth.username="user" \
+                        auth.password="password""
+                    mkdir /var/www/html/zapReport/pipeline${BUILD_NUMBER}/
+                    cp /zap/* /var/www/html/zapReport/pipeline${BUILD_NUMBER}/
+                    rm -rf /zap/*
+                    """
+            }
+        }
+        stage('Deploy app to Prod env') {
+            steps {
+                    sh """
+                    cd app/deploy/manifest
+                    ls -la
+                    oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443
+                    oc project ${params.ocpProjectProd}
+                    oc create -f ${params.manifestFileProd}
+                    sleep 30s
+                    oc get pod
+                    oc get svc
+                    oc get route
+                    """
             }
         }
     }
