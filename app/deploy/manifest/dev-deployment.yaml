@@ -52,7 +52,9 @@ spec:
   selector:
     app: gosip-app-dev
   ports:
-  - port: 80
+  - name: gosip-dev-TCP
+    protocol: TCP
+    port: 10007
     targetPort: 10007
 ---
 apiVersion: route.openshift.io/v1
@@ -62,7 +64,7 @@ metadata:
 spec:
   host: gosip-app-dev.apps.lab.i3datacenter.my.id 
   port:
-    targetPort: 80
+    targetPort: gosip-dev-TCP
   to:
     kind: Service
     name: gosip-dev-svc
