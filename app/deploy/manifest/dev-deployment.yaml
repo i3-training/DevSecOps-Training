@@ -52,7 +52,7 @@ spec:
   selector:
     app: gosip-app-dev
   ports:
-  - name: gosip-dev-TCP
+  - name: gosip-dev-tcp
     protocol: TCP
     port: 10007
     targetPort: 10007
