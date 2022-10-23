@@ -47,7 +47,7 @@ Deploy db on dev project
 oc new-app --template=mariadb-ephemeral \
 -p MYSQL_USER=user -p MYSQL_PASSWORD=pass \
 -p MYSQL_ROOT_PASSWORD=root -p MYSQL_DATABASE=a7db \
--p MEMORY_LIMIT=256Mi -p DATABASE_SERVICE_NAME=mysqldb-dev
+-p MEMORY_LIMIT=256Mi -p DATABASE_SERVICE_NAME=mariadb-dev
 ```
 
 Deploy db on prod project
@@ -56,5 +56,5 @@ Deploy db on prod project
 oc new-app --template=mariadb-ephemeral \
 -p MYSQL_USER=user -p MYSQL_PASSWORD=pass \
 -p MYSQL_ROOT_PASSWORD=root -p MYSQL_DATABASE=a7db \
--p MEMORY_LIMIT=256Mi -p DATABASE_SERVICE_NAME=mysqldb-prod
+-p MEMORY_LIMIT=256Mi -p DATABASE_SERVICE_NAME=mariadb-prod
 ```
