@@ -51,22 +51,25 @@ metadata:
   labels:
     app: gosip-app-prod
 spec:
+  ports:
+    - name: 10007-tcp
+      protocol: TCP
+      port: 10007
+      targetPort: 10007
   selector:
     app: gosip-app-prod
-  ports:
-  - name: gosip-prod-tcp
-    protocol: TCP
-    port: 10007
-    targetPort: 10007
 ---
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: gosip-app-prod-route
+  labels:
+    app: gosip-app-prod
 spec:
   host: gosip-app-prod.apps.lab.i3datacenter.my.id 
   port:
-    targetPort: gosip-prod-TCP
+    targetPort: 10007-tcp
   to:
     kind: Service
     name: gosip-app-prod-svc
+    weight: 100
