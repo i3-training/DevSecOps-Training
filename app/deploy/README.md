@@ -8,7 +8,7 @@ deployment prerequisites.
 
 ## 1. Create Project/Namespace
 
-this ci/cd pipeline require 2 project to be used for deployment, dev project will be used for test by zap then the aplication will be deployed in prod namespace.
+this ci/cd pipeline require 2 project to be used for deployment, dev project will be used for test by zap then the application will be deployed in prod namespace.
 
 ```bash
 oc new-project devsecops-dev
@@ -58,3 +58,5 @@ oc new-app --template=mariadb-ephemeral \
 -p MYSQL_ROOT_PASSWORD=root -p MYSQL_DATABASE=a7db \
 -p MEMORY_LIMIT=256Mi -p DATABASE_SERVICE_NAME=mariadb-prod
 ```
+
+Create a user inside database a7db for zap can use it for scanning inside the application.
