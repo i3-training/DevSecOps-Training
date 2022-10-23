@@ -25,20 +25,20 @@ spec:
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:
-                name: mysqldb-prod
+                name: mariadb-prod
                 key: database-user
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-                name: mysqldb-prod
+                name: mariadb-prod
                 key: database-password
         - name: MYSQL_DB
           valueFrom:
             secretKeyRef:
-                name: mysqldb-prod
+                name: mariadb-prod
                 key: database-name
         - name: MYSQL_ENDPOINT
-          value: mysqldb-prod
+          value: mariadb-prod
         - name: SECRET_KEY
           value: secretkey
         ports:
