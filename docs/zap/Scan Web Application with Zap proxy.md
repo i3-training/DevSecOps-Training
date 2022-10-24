@@ -29,7 +29,7 @@ vim /etc/hosts
 
 - Insert this
 ```bash
-10.8.60.50 gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id bodgeit-intern-devsecops-dev.apps.lab.i3datacenter.my.id
+10.8.60.50 gosip-app-stage.apps.lab.i3datacenter.my.id bodgeit-intern-devsecops-dev.apps.lab.i3datacenter.my.id
 ```
 
 ## Scan With ZAP
@@ -67,7 +67,7 @@ vim /opt/hosts_zap
 
 - Insert this
 ```bash
-10.8.60.50 gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id
+10.8.60.50 gosip-app-stage.apps.lab.i3datacenter.my.id
 ```
 
 ### Baseline Scan
@@ -81,12 +81,12 @@ docker run -t <target> zap-baseline.py -t <target> [options]
 - Example Command
 ```bash
 docker run --rm -v $(pwd):/zap/wrk:rw -v /opt/hosts_zap:/etc/hosts -t ictu/zap2docker-weekly zap-baseline.py -I -j \
--t http://gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id/ \
+-t http://gosip-app-stage.apps.lab.i3datacenter.my.id/ \
 -r baselinereport.html \
 -J baselinereport.json \
 -g baselinereport.conf \
 --hook=/zap/auth_hook.py \
--z "auth.loginurl=http://gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id/login \
+-z "auth.loginurl=http://gosip-app-stage.apps.lab.i3datacenter.my.id/login \
 auth.username="user" \
 auth.password="password""
 ```
@@ -94,10 +94,12 @@ auth.password="password""
 Once scanning success, it should look like the following :
 ```bash
 ...
-WARN-NEW: Cookie without SameSite Attribute [10054] x 2
-        http://gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id/login (200 OK)
-        http://gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id/register (302 FOUND)
-FAIL-NEW: 0     FAIL-INPROG: 0  WARN-NEW: 4     WARN-INPROG: 0  INFO: 0 IGNORE: 0       PASS: 29
+WARN-NEW: Cookie without SameSite Attribute [10054] x 2 
+    http://gosip-app-stage.apps.lab.i3datacenter.my.id/login (200 OK)
+    http://gosip-app-stage.apps.lab.i3datacenter.my.id/register (302 FOUND)
+WARN-NEW: Timestamp Disclosure - Unix [10096] x 1 
+    http://gosip-app-stage.apps.lab.i3datacenter.my.id/static/css/login.css (200 OK)
+FAIL-NEW: 0    FAIL-INPROG: 0    WARN-NEW: 5    WARN-INPROG: 0    INFO: 0    IGNORE: 0    PASS: 28
 ```
 
 ### Full Scan
@@ -111,12 +113,12 @@ docker run -t <target> zap-full-scan.py -t <target> [options]
 - Example Command
 ```bash
 docker run --rm -v $(pwd):/zap/wrk:rw -v /opt/hosts_zap:/etc/hosts -t ictu/zap2docker-weekly zap-full-scan.py -I -j \
--t http://gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id/ \
+-t http://gosip-app-stage.apps.lab.i3datacenter.my.id/ \
 -r fullreport.html \
 -J fullreport.json \
 -g fullreport.conf \
 --hook=/zap/auth_hook.py \
--z "auth.loginurl=http://gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id/login \
+-z "auth.loginurl=http://gosip-app-stage.apps.lab.i3datacenter.my.id/login \
 auth.username="user" \
 auth.password="password""
 ```
@@ -124,10 +126,14 @@ auth.password="password""
 Once scanning success, it should look like the following :
 ```bash
 ...
-WARN-NEW: Cookie without SameSite Attribute [10054] x 2
-        http://gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id/login (200 OK)
-        http://gosip-app-intern-devsecops-dev.apps.lab.i3datacenter.my.id/register (302 FOUND)
-FAIL-NEW: 0     FAIL-INPROG: 0  WARN-NEW: 4     WARN-INPROG: 0  INFO: 0 IGNORE: 0       PASS: 52
+WARN-NEW: Timestamp Disclosure - Unix [10096] x 1 
+    http://gosip-app-stage.apps.lab.i3datacenter.my.id/static/css/login.css (200 OK)
+WARN-NEW: Absence of Anti-CSRF Tokens [10202] x 4 
+    http://gosip-app-stage.apps.lab.i3datacenter.my.id/gossip (200 OK)
+    http://gosip-app-stage.apps.lab.i3datacenter.my.id/gossip/1 (200 OK)
+    http://gosip-app-stage.apps.lab.i3datacenter.my.id/gossip?page (200 OK)
+    http://gosip-app-stage.apps.lab.i3datacenter.my.id/gossip?search=ZAP (200 OK)
+FAIL-NEW: 0    FAIL-INPROG: 0    WARN-NEW: 6    WARN-INPROG: 0    INFO: 0    IGNORE: 0    PASS: 50
 ```
 
 ### API Scan
