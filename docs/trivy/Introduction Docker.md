@@ -1,6 +1,6 @@
 # Introduction Docker
 
-![docker-logo](../../images/vmvscontainer.jpg)
+![vmvsconatiner](../../images/vmvscontainer.jpg)
 
 ## VM vs Container
 
@@ -18,7 +18,7 @@ Docker enables you to separate your applications from your infrastructure so you
 
 ## Docker Archictecture
 
-![docker-logo](../../images/docker-architecture.png)
+![docker-architecture](../../images/docker-architecture.png)
 
 ### Docker Client
 
