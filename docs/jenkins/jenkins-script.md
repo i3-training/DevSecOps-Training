@@ -12,38 +12,22 @@ SonarQube is an excellent tool for measuring code quality, using static analysis
 
 This step pauses Pipeline execution and wait for previously submitted SonarQube analysis to be completed and returns quality gate status. Setting the parameter abortPipeline to true will abort the pipeline if quality gate status is not green.
 
-Example using simple declarative pipeline:
-
-```bash
-        stage('Sonnar-Scanner') {
-                steps {
-                        sh '''
-                        "your-project-directory"
-                        "your-sonarscanner-directory"
-                        -Dsonar.projectKey="your-key" \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=http://localhost:9000/ \
-                        -Dsonar.login="your-token"
-                        -Dsonar.qualitygate.wait=true
-                        '''
-                        }
-```
-
 Here we give you the pipeline we use in this project :
 
 ```bash
-        stage('Sonnar-Scanner') {
-                steps {
-                        sh '''
-                        cd app/
-                        /home/jenkins/sonar-scanner/sonar-scanner/bin/sonar-scanner \
-                        -Dsonar.projectKey="jenkins-devsecops" \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=http://10.8.60.123:9000/ \
-                        -Dsonar.login="e1f735b437dd77262312033dfa83766cdbc3508c" \
-                        -Dsonar.qualitygate.wait=true
-                        '''
-                        }
+stage('Sonnar-Scanner') {
+        steps {
+                sh '''
+                cd app/
+                /home/jenkins/sonar-scanner/sonar-scanner/bin/sonar-scanner \
+                -Dsonar.projectKey="jenkins-devsecops" \
+                -Dsonar.sources=. \
+                -Dsonar.host.url=http://10.8.60.123:9000/ \
+                -Dsonar.login="e1f735b437dd77262312033dfa83766cdbc3508c" \
+                -Dsonar.qualitygate.wait=true
+                '''
+                }
+}
 ```
 
 Note: We can use that pipeline for condition that we don't need to build your configuration in sonar-project.properties, so we build the configuration in Jenkins pipeline.
@@ -53,25 +37,27 @@ The different condition is when you have your own sonar-project.properties in yo
 Example using simple one line declarative pipeline:
 
 ```bash
-        stage('Sonnar-Scanner') {
-                steps {
-                        sh '''
-                        "your-project-directory"
-                        "your-sonarscanner-directory"
-                        '''
-                        }
+stage('Sonnar-Scanner') {
+        steps {
+                sh '''
+                "your-project-directory"
+                "your-sonarscanner-directory"
+                '''
+                }
+}
 ```
 
 Here we give you the pipeline we use in this project :
 
 ```bash
-        stage('Sonnar-Scanner') {
-                steps {
-                        sh '''
-                        cd app/
-                        /home/jenkins/sonar-scanner/sonar-scanner/bin/sonar-scanner
-                        '''
-                        }
+stage('Sonnar-Scanner') {
+        steps {
+                sh '''
+                cd app/
+                /home/jenkins/sonar-scanner/sonar-scanner/bin/sonar-scanner
+                '''
+                }
+}
 ```
 
 # Trivy Pipeline
@@ -85,9 +71,9 @@ Then the Filesystem scanner will be used to check the vulnerability of modules o
 
 Vulnerability and Secret Scanner will check for vulnerabilities after the image has been created. Because we know for sure that the image will not be possible to create from zero. So it will definitely use the existing base image. Therefore, this step is important because it will check before being pushed to the private registry. Trivy can also do a secret scanner, if there is a secret that is embedded as an env or a file in the image.
 
-```
- stage('Misconfig Scanner') {
-            steps {
+```bash
+stage('Misconfig Scanner') {
+        steps {
                 sh """
                 cd app/
                 mkdir /var/www/html/trivy/pipeline${BUILD_NUMBER}/
@@ -96,11 +82,12 @@ Vulnerability and Secret Scanner will check for vulnerabilities after the image 
                 trivy config . -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.json
                 trivy config . --format template --template "@deploy/html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.html --exit-code 0 --severity HIGH,CRITICAL
                 """
-            }
         }
-
+}
+```
+```bash
 stage('Filesystem Scanner') {
-            steps {
+        steps {
                 sh """
                 cd app/
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.html
@@ -108,11 +95,12 @@ stage('Filesystem Scanner') {
                 trivy fs . -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.json
                 trivy fs . --format template --template "@deploy/html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.html --exit-code 0 --severity HIGH,CRITICAL
                 """
-            }
         }
-
+}
+```
+```bash
 stage('Vulnerability and Secret Scanner') {
-            steps {
+        steps {
                 sh """
                 cd app/deploy
                 touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html
@@ -120,8 +108,8 @@ stage('Vulnerability and Secret Scanner') {
                 trivy image -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
                 trivy image --format template --template "@html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html --exit-code 0 --severity HIGH,CRITICAL ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
                 """
-            }
         }
+}
 ```
 
 the results of the checks carried out by trivy, will be directly exported into html files and will be directly moved to the web server directory. This will make it easier for us to see the results of the reports obtained.
@@ -137,7 +125,7 @@ ZAP or Zed Attack Proxy is an open-source and free penetration testing tool. In 
 
 The following is the pipeline used in this project:
 
-```
+```bash
 stage('Zap Proxy') {
             steps {
                     sh """
@@ -161,3 +149,65 @@ stage('Zap Proxy') {
 After the scanning process is complete, the results of the scanning will be exported in html and json form, and the config will also be exported. Then, Jenkins will create a new directory and copy the export file to the new directory. After that, jenkins will delete the original file.
 
 Note: Every time we run Jenkins, Jenkins will create a new directory based on the pipeline. So we don't have to worry about losing the previous report.
+
+# Nexus Pipeline
+Nexus is an open source repository that supports many artifact formats, including Docker, Java. In this project we use the nexus repository to store the images that have been created. The code below performs the command to login to the nexus account that has been created, after that save the image and delete the local images because they are not needed anymore.
+
+```bash
+stage('Push Image to nexus') {
+            steps {
+                sh """
+                set +x
+                docker login --username=${params.nexusUser} --password=${params.nexusPassword} ${params.nexusServer}
+                set -x
+                docker push ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
+                docker rmi ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
+                docker images
+                """
+            }
+        }
+```
+
+Note: set +x and set -x are used to hide the command being executed so it doesn't print in the terminal.
+
+# Openshift Pipeline
+Openshift is a redhat container platform built on top of Kubernetes to create a powerful workflow for building, deploying and managing your application.
+
+
+The code below performs the command for openshift deployment. first we go to manifest folder and login to openshift account and create the a project to the selected environment. Then create and oc deployment with the selected deployment file
+onces created. We wait 30 seconds and then display if out pods, servicers and routes got created prooperly
+
+```bash
+ stage('Deploy app to dev env') {
+            steps {
+                    sh """
+                    cd app/deploy/manifest //go into manifest file
+                    ls -la
+                    oc login -u ${params.ocpUser} -p ${params.ocpPassword}  --server=https://api.lab.i3datacenter.my.id:6443 //login
+                    oc project ${params.ocpProject} //switch to another project
+                    oc create -f ${params.manifestFile} //create a resource from a specific file
+                    sleep 30s
+                    oc get pod display many resource
+                    oc get svc
+                    oc get route
+                    """
+            }
+        }
+```
+```bash
+ stage('Deploy app to Prod env') {
+            steps {
+                    sh """
+                    cd app/deploy/manifest
+                    ls -la
+                    oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443
+                    oc project ${params.ocpProjectProd}
+                    oc create -f ${params.manifestFileProd}
+                    sleep 30s
+                    oc get pod
+                    oc get svc
+                    oc get route
+                    """
+            }
+        }
+```
