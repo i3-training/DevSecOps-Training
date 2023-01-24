@@ -18,7 +18,7 @@ Docker enables you to separate your applications from your infrastructure so you
 
 ## Docker Archictecture
 
-![docker-architecture](../../images/docker-architecture.png)
+![docker-architecture](/images/docker-architecture.png)
 
 ### Docker Client
 
@@ -31,7 +31,7 @@ The Docker daemon (dockerd) listens for Docker API requests and manages Docker o
 ### Docker Registry
 
 A Docker registry stores Docker images. Docker Hub is a public registry that anyone can use, and Docker is configured to look for images on Docker Hub by default. You can even run your own private registry.
-When you use the docker pull or docker run commands, the required images are pulled from your configured registry. When you use the docker push command, your image is pushed to your configured registry. [Click Me](https://hub.docker.com/)
+When you use the docker pull or docker run commands, the required images are pulled from your configured registry. When you use the docker push command, your image is pushed to your configured registry. [Docker Hub](https://hub.docker.com/)
 
 ### Docker Images
 
