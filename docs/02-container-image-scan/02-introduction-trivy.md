@@ -1,6 +1,8 @@
 # Trivy
 
-![report-logo](../../images/trivy-logo.png)
+<p align="center">
+  <img src="https://aquasecurity.github.io/trivy/v0.34/imgs/logo.png" />
+</p>
 
 Trivy is a comprehensive security scanner. It is reliable, fast, extremely easy to use, and it works wherever you need it. Trivy has different scanners that look for different security issues, and different targets where it can find those issues.
 

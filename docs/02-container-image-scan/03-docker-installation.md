@@ -1,14 +1,16 @@
 # Docker Installation
 
-![docker-logo](../../images/dockerlogo-trivy.png)
+<p align="center">
+  <img src="https://www.docker.com/wp-content/uploads/2022/03/horizontal-logo-monochromatic-white.png" />
+</p>
 
-## Install Docker Engine on RHEL
+## Install Docker Engine on Ubuntu
 
-To get started with Docker Engine on RHEL, make sure you meet the prerequisites, then install Docker.
+To get started with Docker Engine on Ubuntu, make sure you meet the prerequisites, then install Docker.
 
 ## OS Requirements
 
-To install Docker Engine, you need a maintained version of Ubuntu 
+To install Docker Engine, you need a maintained version of Ubuntu.
 ## Uninstall old versions docker
 
 Older versions of Docker if these are installed, uninstall them, along with associated dependencies.
