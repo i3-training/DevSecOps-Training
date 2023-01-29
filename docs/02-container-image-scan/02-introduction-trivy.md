@@ -56,3 +56,52 @@ Trivy will scan every plaintext file, according to builtin rules or configuratio
 - Gitlab personal access token
 - Slack access token
 - etc
+
+## Installation
+
+### Trivy CLI
+
+Run `get install` command to install trivy
+
+```bash
+sudo apt-get install trivy
+```
+
+if command above don't work you will need to add trivy repo to your system, use steps below.
+first install required dependency for installation.
+
+```bash
+sudo apt-get install wget apt-transport-https gnupg lsb-release
+```
+
+manually add trivy repo to your system using command below.
+
+```bash
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+```
+
+Install trivy
+
+```bash
+sudo apt-get update
+sudo apt-get install trivy
+```
+
+after installation is complete run `trivy` command on your terminal.
+
+### Docker Desktop
+
+You can use new feature on Docker desktop called extensions to install trivy for scanning your container images.
+
+Prerequisite:
+Docker Desktop installed and running on your system
+
+1. On Home page docker desktop click Add Extensions
+![docker-home](../../images/trivy-docker1.jpg)
+
+2. Search for Trivy and Install.
+![docker-extention](../../images/trivy-docker2.jpg)
+
+3. After Trivy successfully installed, you will see Trivy on left bar, from there you can scan any container image on your local system.
+![trivy-on-docker](../../images/trivy-docker3.jpg)
