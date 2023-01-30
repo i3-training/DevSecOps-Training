@@ -1,6 +1,8 @@
 # Introduction Docker
 
-![vmvsconatiner](../../images/vmvscontainer.jpg)
+<p align="center">
+  <img src="../../images/vmvscontainer.jpg" />
+</p>
 
 ## VM vs Container
 

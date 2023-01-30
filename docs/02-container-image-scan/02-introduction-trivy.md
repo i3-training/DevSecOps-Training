@@ -90,7 +90,7 @@ sudo apt-get install trivy
 
 after installation is complete run `trivy` command on your terminal.
 
-### Docker Desktop
+### Trivy on Docker Desktop
 
 You can use new feature on Docker desktop called extensions to install trivy for scanning your container images.
 
