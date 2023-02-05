@@ -5,8 +5,9 @@
 This guide will help you to set up and configure SonarQube 8.9 LTS versions on Linux servers RedHat version 8. Follow the steps given below for the complete SonarQube configuration.
 
 ## SonarQube Requirements
+
 1. A small-scale (individual or small team) instance of the SonarQube server requires at least 2GB of RAM to run efficiently and 1GB of free RAM for the OS.
-2. OpenJDK 11 or JRE 11.
+2. OpenJDK 11 or JRE 11 above.
 3. PostgreSQL version 13 or greater.
 4. Add requirements Elasticsearch for resources Linux.
 5. All sonarquber process should run as a non-root sonar user.
@@ -20,6 +21,7 @@ You must be able to install Java (Oracle JRE or OpenJDK) on the machine where yo
 ```
 
 ## Install PostgreSQL Database For SonarQube
+
 We will use version 13 of PostgreSQL. If you don't have repository of PostgreSQL, follow this step for installing PostgreSQL in RHEL based:
 
 ```bash
@@ -103,11 +105,12 @@ You need to restart PostgreSQL service after changed method of `pg_hba.conf`:
 ```
 
 ## Setup Sonarqube Server
+
 Download sonarqube installation file to `/opt` folder:
 
 ```bash
  cd /opt/
- sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.9.9.56886.zip
+ sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.9.10.61524.zip
 ```
 
 Unzip SonarQube source files and rename the folder:

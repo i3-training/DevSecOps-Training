@@ -221,6 +221,53 @@ sudo systemctl status sonarqube
 
 ## SonarQube Scanner Installation
 
+### 1. Install Git
 
+Execute git --version to check whether the git tool is already installed.
+
+Download git with following this command:
+
+```bash
+sudo apt-get install git
+
+# Check git version
+git
+git --version
+```
+
+Set git config using your user name and email address:
+
+```bash
+git config --global user.name "Your NameHere"
+git config --global user.email Your@email.com
+```
+
+### 2. Install Sonar Scanner
+
+The SonarScanner is the scanner to use when there is no specific scanner for your build system.
+Optional you can put your binary on /opt directory, the same as sonarqube server.
+
+Download and extract sonar-scanner binary in sonar-scanner directory with this command:
+
+```bash
+sudo wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+
+# Extract the binary
+sudo unzip sonar-scanner-cli-4.7.0.2747-linux.zip
+```
+
+Add sonar-scanner binary to `/usr/local/bin/` so user can run the scanner.
+
+```bash
+# Go to your sonar-scanner binary directory. (Make sure you enter /bin directory)
+cd /opt/sonar-scanner-4.7.0.2747-linux/bin
+
+# Create a link to /usr/local/bin 
+sudo ln -s /opt/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner /usr/local/bin/
+
+# Check sonar-scanner
+which sonar-scanner
+sonar-scanner --version
+```
 
 ## SonarQube jenkins Integration
