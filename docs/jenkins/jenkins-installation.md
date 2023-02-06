@@ -1,82 +1,82 @@
 # Jenkins Installation
 
-## Requirements
-- System: RHEL 8
-- Software: Jenkins v.2.361.1  
-- 256 MB of RAM, 1 GB+ recommended
-- 1 GB of drive space (although 10 GB is a recommended minimum if running Jenkins as a Docker container)
+This guide will help you to set up and configure Jenkins on Ubuntu Server. Follow the steps given below for the complete Jenkins configuration.
 
-## Install Jenkins on RHEL 8
-1. Install Java on RHEL 8
+## Jenkins Requirements
+
+1. System: Ubuntu 20.04
+2. 256 MB of RAM, 1 GB+ recommended
+3. 1 GB of drive space (although 10 GB is a recommended minimum if running Jenkins as a Docker container)
+
+## Installation Process
+
+### 1. Install Java
+
+You must install Java (Oracle JRE or OpenJDK) on the machine where you plan to run SonarQube:
+
 ```bash
-sudo yum -y install java-11-openjdk-devel
+sudo apt install openjdk-17-jre-headless
 ```
-2. Check Java version
-```bash 
-java -version
+
+### 2. Add Jenkins repo
+
+Add jenkins LTS release into your system using these command.
+
+```bash
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
 ```
-3. Adding Jenkins Repository
-Install wget package is no installed already 
-``` bash
-sudo yum -y install wget
+
+### 3. Install Jenkins
+
+Install Jenkins using apt install.
+
+```bash
+# update first.
+sudo apt-get update
+
+sudo apt-get install jenkins
 ```
-Download and enable Jenkins Repository
-``` bash
-sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+
+### 4. Start Jenkins Service
+
+Start your jenkins Instance using systemctl as shown below.
+
+```bash
+sudo systemctl enable jenkins.service
+
+sudo systemctl start jenkins.service
 ```
-Import Jenkins GPG Key
-``` bash
-sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+## Configure Jenkins
+
+After jenkins.service is running on your system, you can acess it via browser `http://<your-server-address>:8080/` after you acess it you will be ask temporary admin password that come from installation, to see your password you can either check on jenkins.service logs or temporary password file. command below show you how to do it.
+
+```bash
+# Check aadmin temp password via logs
+sudo systemctl status jenkins.service
+
+# Check password from temporary file
+sudo vim /var/lib/jenkins/secrets/initialAdminPassword
 ```
-4. Install Jenkins
-``` bash
-sudo yum -y install jenkins
-```
-5. Start and Enable Jenkins Service
-after installation, start and enable Jenkins service
-``` bash
-sudo systemctl start jenkins
-sudo systemctl enable jenkins
-sudo systemctl status jenkins
-```
-6. Configure Firewall
-Jenkins is works on port 8080 so we need to allow conection on that port by adding it in firewall
-``` bash
-sudo firewall-cmd --add-port=8080/tcp --permanent
-sudo firewall-cmd --reload
-sudo firewall-cmd --list-all
-```
-7. Configure Jenkins on RHEL 
-Browser to the URL **server-ip:8080**
 
-you will see page below asking for Admin password to Unlock Jenkins, when you browse the URL first time.
+![Unlock Jenkins](../../images/jenkins-init.png)
 
-![getting-started](/images/getting-started.png)
+After login using temporary password next jenkins setup will be intsalling plugins, you can opt out and install it next time. 
 
-A path is also display on the page in which the password is saved, so go to your terminal and issue following command to get the password.
+![Install Plugin](../../images/jenkins-plugin1.png)
 
-> cat /var/lib/jenkins/secrets/initialAdminPassword
+if you opt in to install plugin wait until installation is complete.
 
-![unlock-jenkins](/images/unlock-jenkins.png)
+![Installing Plugin](../../images/jenkins-plugin2.png)
 
-copy and paste it into the "Adminstrator password" box and click Continue
+After plugin installation is completed, the next step is to create new admin user fill all from as shown below.
 
-![unlock-jenkins-password](/images/unlock-jenkins-password.png)
+![Admin Account](../../images/jenkins-adm.png)
 
-So you will be asked if you want to install the suggested plugins or install additional plugins. I choose “install the suggested plugins” option you can choose your desired and the installation process will start immediately.
+After creating admin account finish remaining steps, jenkins ready to use and you will be redirected to jenkins homepage.
 
-![customize-jenkins](/images/customize-jenkins.png)
-
-![getting-started-2](/images/getting-started-2.png)
-
-Now, create an admin account which will be used to manage the Jenkins server
-
-![admin-user](/images/admin-user.png)
-
-Then, set a URL or leave it as default and click on Save and Finish button.
-
-![instance-configuration](/images/instance-configuration.png)
-
-Evrything has been done, click " Start using Jenkins" button and you will redirect to the Jenkins dashboard.
-
-![jenkins](/images/jenkins.png)
+![Jenkins Home](../../images/jenkins-home.png)
