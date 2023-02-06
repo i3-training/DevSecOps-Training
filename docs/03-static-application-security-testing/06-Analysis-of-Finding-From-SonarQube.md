@@ -29,25 +29,3 @@ A Quality Gate are the set of conditions a project must meet before it should be
 ![sq-projects](../../images/farm-qgates.png)
 
 A default quality gates from SonarQube is already there. Administrators can also create new custom Quality Gates and set the values inside.
-
-# Integrating SonarQube into Jenkins
-
-Here are some examples for Jenkins's pipeline to integrating SonarQube:
-
-```bash
- pipeline {
- ...
-        stage('Sonnar-Scanner') {
-                steps {
-                        sh '''
-                        "your-sonarscanner-directory"
-                        Dsonar.projectKey="your-key" \
-                        Dsonar.sources=. \
-                        Dsonar.host.url=http://localhost:9000/ \
-                        Dsonar.login="your-token"
-                        Dsonar.qualitygate.wait=true
-                        '''
-                        }
- ...
- }
-```
