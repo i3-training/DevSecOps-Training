@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'imageRegistry', defaultValue: 'quay.io', description: 'Image Registry address')
+        string(name: 'registryUser', defaultValue: 'devtiandicky+pewpewbot', description: 'Image Registry username')
+        string(name: 'registryPass', defaultValue: 'PGLIKDSC2V8P7VFCBMMN6ODPE2ZZJQUIGVKNJJLM51ZVYFA3MWCFONULG653L6MV', description: 'Image Registry Password')
+        string(name: 'ocpUser', defaultValue: 'jenkins', description: 'Openshift username')
+        string(name: 'ocpPassword', defaultValue: 'sharkdevsecops1', description: 'Openshift user password')
+        choice(name: 'ocpProject', choices: ['pnm-demo-jenkins'], description: 'env where app to be deployed')
+        choice(name: 'manifestFile', choices: ['deployment.yaml'], description: 'env where app to be deployed')
+    }
+    stages {
+        stage('Create Image') {
+            steps {
+                sh """
+                docker image rm ${params.imageRegistry}/devtiandicky/go-sample:latest || echo "No existing image found"
+                docker build --pull --rm -f "apps/Dockerfile" -t ${params.imageRegistry}/devtiandicky/go-sample:latest "apps"
+                """
+            }
+        }
+        stage('Push Image to nexus') {
+            steps {
+                sh """
+                set +x
+                docker login --username=${params.registryUser} --password=${params.registryPass} ${params.imageRegistry}
+                set -x
+                docker push ${params.imageRegistry}/devtiandicky/go-sample:latest
+                docker rmi ${params.imageRegistry}/devtiandicky/go-sample:latest
+                docker images
+                """
+            }
+        }
+        stage('Deploy app to Prod env') {
+            steps {
+                    sh """
+                    cd apps/deploy/
+                    ls -la
+                    oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443 --insecure-skip-tls-verify
+                    oc project ${params.ocpProject}
+                    oc create -f ${params.manifestFile}
+                    sleep 30s
+                    oc get pod
+                    oc get svc
+                    oc get route
+                    """
+            }
+        }
+        stage('Deploy app to cluster') {
+            steps {
+                    sh """
+                    cd apps/deploy/
+                    ls -la
+                    oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443 --insecure-skip-tls-verify
+                    oc project ${params.ocpProject}
+                    oc create -f ${params.manifestFile}
+                    sleep 30s
+                    oc get pod
+                    oc get svc
+                    oc get route
+                    """
+            }
+        }
+    }
+}
