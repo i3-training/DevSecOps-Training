@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gosip-app-dev
+spec:
+  selector:
+    matchLabels:
+      app: gosip-app-dev
+  template:
+    metadata:
+      labels:
+        app: gosip-app-dev
+    spec:
+      containers:
+      - name: gosip-app-dev
+        image: 10.8.60.123:5000/gosip-app:0.01
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "128m"
+          request:
+            memory: "128Mi"
+            cpu: "128m"
+        env:
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+                name: mariadb-dev
+                key: database-user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+                name: mariadb-dev
+                key: database-password
+        - name: MYSQL_DB
+          valueFrom:
+            secretKeyRef:
+                name: mariadb-dev
+                key: database-name
+        - name: MYSQL_ENDPOINT
+          value: mariadb-dev
+        - name: SECRET_KEY
+          value: secretkey
+        ports:
+        - containerPort: 10007
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gosip-app-dev-svc
+  labels:
+    app: gosip-app-dev
+spec:
+  ports:
+    - name: 10007-tcp
+      protocol: TCP
+      port: 10007
+      targetPort: 10007
+  selector:
+    app: gosip-app-dev
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: gosip-app-dev-route
+  labels:
+    app: gosip-app-dev
+spec:
+  host: gosip-app-dev.apps.lab.i3datacenter.my.id 
+  port:
+    targetPort: 10007-tcp
+  to:
+    kind: Service
+    name: gosip-app-dev-svc
+    weight: 100
