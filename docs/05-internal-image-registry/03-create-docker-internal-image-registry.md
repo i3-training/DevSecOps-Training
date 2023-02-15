@@ -134,4 +134,4 @@ nexus.hazelcast.discovery.isEnabled=true
 your default admin password can be found in /app/sonatype-work/nexus3/admin.password
 after login with default password you need to follow setup wizard to configure your nexus repo for the first time.
 
-After installing Nexus is complete next is setting up a registry on nexus can be followed here [configure nexus](/nexus/configure-nexus.md)
+After installing Nexus is complete next is setting up a registry on nexus can be followed here [configure nexus](../05-internal-image-registry/02-nexus-repository-administration.md)
