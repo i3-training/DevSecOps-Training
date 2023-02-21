@@ -14,4 +14,4 @@ COPY configs/ /
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT /entrypoint.sh
 LABEL Name=go-rest Version=0.0.1
-EXPOSE 8080
+EXPOSE 9090

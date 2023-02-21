@@ -85,5 +85,20 @@ pipeline {
                     """
             }
         }
+        stage('Deploy app to Prod env') {
+            steps {
+                    sh """
+                    cd app/deploy/manifest
+                    ls -la
+                    oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443
+                    oc project ${params.ocpProjectProd}
+                    oc create -f ${params.manifestFileProd}
+                    sleep 30s
+                    oc get pod
+                    oc get svc
+                    oc get route
+                    """
+            }
+        }
     }
 }
