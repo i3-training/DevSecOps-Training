@@ -13,7 +13,7 @@ pipeline {
         string(name: 'manifestFileProd', defaultValue: 'prod-deployment.yaml', description: 'env where app to be deployed')
     }
     stages {
-        stage('Sonnar-Scanner') {
+        stage('Static application security testing process') {
             steps {
                     sh """
                     cd app/
@@ -21,31 +21,7 @@ pipeline {
                     """
             }
         }
-        stage('Misconfig Scanner') {
-            steps {
-                sh """
-                cd app/
-                mkdir /var/www/html/trivy/pipeline${BUILD_NUMBER}/
-                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.html
-                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.json
-                trivy config . -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.json
-                trivy config . --format template --template "@deploy/html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportconfig.html --exit-code 0 --severity HIGH,CRITICAL
-                """
-            }
-        }
-        // scan filesystem such package.json and requirements.txt
-        stage('Filesystem Scanner') {
-            steps {
-                sh """
-                cd app/
-                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.html
-                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.json
-                trivy fs . -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.json
-                trivy fs . --format template --template "@deploy/html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportfs.html --exit-code 0 --severity HIGH,CRITICAL
-                """
-            }
-        }
-        stage('Create Image') {
+        stage('Create Container Image') {
             steps {
                 sh """
                 docker image rm ${params.nexusServer}/devsecops:v${BUILD_NUMBER} || echo "No existing image found"
@@ -53,7 +29,7 @@ pipeline {
                 """
             }
         }
-        stage('Vulnerability and Secret Scanner') {
+        stage('Container security scan') {
             steps {
                 sh """
                 cd app/deploy
@@ -64,7 +40,6 @@ pipeline {
                 """
             }
         }
-
         stage('Push Image to nexus') {
             steps {
                 sh """
