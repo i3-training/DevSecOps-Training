@@ -1,7 +1,7 @@
 # Gossip World
 
 <p align="center">
-    <img src="../images/banner.png"/>
+    <img src="./images/banner.png"/>
 </p>
 
 Gossip World is a simple Flask app that contains an example of multiple Cross-Site Scripting vulnerabilities and its main goal is to describe how a malicious user could exploit them on this purposefully vulnerable app.
@@ -79,16 +79,16 @@ After inspecting the application, it is possible to identify that some entries a
 ```
 
 Searching for a post:
-   <img src="../images/attack-1.png" align="center"/>
-   <img src="../images/attack-2.png" align="center"/>
+   <img src="./images/attack-1.png" align="center"/>
+   <img src="./images/attack-2.png" align="center"/>
 
 Adding a new comment to a post:
-   <img src="../images/attack-3.png" align="center"/>
-   <img src="../images/attack-4.png" align="center"/>
+   <img src="./images/attack-3.png" align="center"/>
+   <img src="./images/attack-4.png" align="center"/>
 
 Adding a new post:
-   <img src="../images/attack-5.png" align="center"/>
-   <img src="../images/attack-6.png" align="center"/>
+   <img src="./images/attack-5.png" align="center"/>
+   <img src="./images/attack-6.png" align="center"/>
 
 
 The missing input validation allows a malicious user to insert some scripts that will persist in the server and be executed on the victims' browser every time they access the routes that contain these scripts.
@@ -141,15 +141,15 @@ document.onkeypress=function(e) {
 
 This code implements a keylogger to capture all keyboard input from users and send it to the API created beforehand.
 
-   <img src="../images/attack-7.png" align="center"/>
+   <img src="./images/attack-7.png" align="center"/>
 
 When a victim accesses the post, the browser will interpret the text between the script tag as code and will execute it secretly. The following image shows the victim typing letters into the page that has been "infected" by the malicious JS:
 
-<img src="../images/attack-8.png" align="center"/>
+<img src="./images/attack-8.png" align="center"/>
 
 The attacker now gets all the input on the server log, as shown below: 
 
-<img src="../images/attack-9.png" align="center"/>
+<img src="./images/attack-9.png" align="center"/>
 
 ## Secure this app
 
