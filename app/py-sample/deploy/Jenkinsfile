@@ -2,22 +2,15 @@ pipeline {
     agent any
     parameters {
         string(name: 'ImageRegistry', defaultValue: 'registry.i-3.my.id:5000', description: 'Image Registry address')
-        string(name: 'OpenshiftCluster', defaultValue: 'https://api.lab.i3datacenter.my.id:6443', description: 'Openshift Cluster API')
-
-
-        choice(name: 'appEndpoint', choices: ['gosip-app-prod.apps.lab.i3datacenter.my.id', 'gosip-app-dev.apps.lab.i3datacenter.my.id'], description: 'App endpoint for zap to scan')
-        
-        string(name: 'ocpUser', defaultValue: 'jenkins', description: 'Openshift username')
-        string(name: 'ocpPassword', defaultValue: 'sharkdevsecops1', description: 'Openshift user password')
-        
-        choice(name: 'ocpProject', choices: ['intern-devsecops-dev', 'intern-devsecops-prod', 'intern-devsecops-stage'], description: 'env where app to be deployed')
+        string(name: 'OcpCluster', defaultValue: 'https://api.lab.i3datacenter.my.id:6443', description: 'Openshift Cluster API')
+        choice(name: 'ocpProject', choices: 'devsecops-demo', description: 'Project where app to be deployed')
         choice(name: 'manifestFile', choices: ['dev-deployment.yaml', 'prod-deployment.yaml'], description: 'env where app to be deployed')
-        string(name: 'ocpProjectProd', defaultValue: 'intern-devsecops-prod', description: 'env where app to be deployed')
-        string(name: 'manifestFileProd', defaultValue: 'prod-deployment.yaml', description: 'env where app to be deployed')
+        choice(name: 'appEndpoint', choices: ['gosip-app-prod.apps.lab.i3datacenter.my.id', 'gosip-app-dev.apps.lab.i3datacenter.my.id'], description: 'App endpoint for zap to scan')
+        string(name: 'OcpProject', defaultValue: 'devsecops-demo', description: 'Openshift Cluster API')
     }
     environment {
-        REGISTRY_CRED = credentials('my-credential-id')
-        CLUSTER_CRED = credentials('my-credential-id')
+        REGISTRY_CRED = credentials('i3-internal-registry-cred')
+        CLUSTER_TKN = credentials('i3-ocp-deployer-tkn')
     }
     stages {
         stage('Sonarqube - Static application security testing process') {
@@ -28,71 +21,43 @@ pipeline {
         }
         stage('Build Container Image') {
             steps {
-                sh 'docker image rm ${params.ImageRegistry}/devsecops:v${BUILD_NUMBER} || echo "No existing image found"'
-                sh 'docker build --no-cache -t ${params.ImageRegistry}/devsecops:v${BUILD_NUMBER} -f app/deploy/Dockerfile app/'
+                sh('docker image rm $ImageRegistry/devsecops:v${BUILD_NUMBER} || echo "No existing image found"')
+                sh('docker build --no-cache -t $ImageRegistry/devsecops:v${BUILD_NUMBER} -f app/deploy/Dockerfile app/')
             }
         }
         stage('Trivy - Container security scan') {
             steps {
                 sh 'cd app/deploy'
                 sh 'touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html'
-                sh 'touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json'
-                sh 'trivy image -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json ${params.ImageRegistry}/devsecops:v${BUILD_NUMBER}'
-                sh 'trivy image --format template --template "@html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html --exit-code 0 --severity HIGH,CRITICAL ${params.ImageRegistry}/devsecops:v${BUILD_NUMBER}'
+                sh 'trivy image --format template --template "@html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html --exit-code 0 --severity HIGH,CRITICAL ${ImageRegistry}/devsecops:v${BUILD_NUMBER}'
             }
         }
         stage('Push Image to nexus') {
             steps {
-             withCredentials([
-                usernamePassword(
-                    credentialsId: 'i3-internal-registry-cred',
-                    usernameVariable: 'SECRET_USERNAME',
-                    passwordVariable: 'SECRET_PASSWORD'
-          )
-        ])
-            {
-                sh """
-                    echo "$SECRET_PASSWORD" | docker login ${params.ImageRegistry} -u $SECRET_USERNAME --password-stdin
-                    docker push ${params.ImageRegistry}/devsecops:v${BUILD_NUMBER}
-                    docker rmi ${params.ImageRegistry}/devsecops:v${BUILD_NUMBER}
-                """
-            }
+                sh('echo "$REGISTRY_CRED_PSW" | docker login $ImageRegistry -u $REGISTRY_CRED_USR --password-stdin')
+                sh('docker push $ImageRegistry/devsecops:v${BUILD_NUMBER}')
+                sh('docker rmi $ImageRegistry/devsecops:v${BUILD_NUMBER}') 
             }
         }
         stage('Deploy app to Staging env') {
             steps {
-             withCredentials([
-                usernamePassword(
-                    credentialsId: 'i3-ocp-deployer-cred',
-                    usernameVariable: 'SECRET_USERNAME',
-                    passwordVariable: 'SECRET_PASSWORD'
-          )
-        ])
-            {
-                sh """
-                    cd app/deploy/manifest
-                    ls -la
-                    echo "$CLUSTER_CRED_PSW" | oc login --server=${params.OpenshiftCluster} -u $CLUSTER_CRED_USR --password-stdin
-                    oc project ${params.ocpProject}
-                    oc create -f ${params.manifestFile}
-                    sleep 30s
-                    oc get pod
-                    oc get svc
-                    oc get route
-                """
-            }
+                sh('cd app/deploy/manifest')
+                sh('echo "$CLUSTER_CRED_PSW" | oc login --server=$OpenshiftCluster -u $CLUSTER_CRED_USR --password-stdin')
+                sh('oc login --token=$CLUSTER_TKN --server=$OcpCluster')
+                sh('oc project $ocpProject && oc create $manifestFile')
+                sh('sleep 30s && oc get all')
             }
         }
         stage('Zap Proxy - Dynamic application security testing process') {
             steps {
                     sh """
                     docker run --rm -v /zap:/zap/wrk:rw -v /opt/hosts_zap:/etc/hosts -t ictu/zap2docker-weekly zap-baseline.py -I -j \
-                    -t http://${params.appEndpoint} \
+                    -t http://$appEndpoint \
                     -r reportzap.html \
                     -J reportzap.json \
                     -g reportzap.conf \
                     --hook=/zap/auth_hook.py \
-                    -z "auth.loginurl=http://${params.appEndpoint}/login \
+                    -z "auth.loginurl=http://$appEndpoint/login \
                         auth.username="user" \
                         auth.password="password""
                     mkdir /var/www/html/zapReport/pipeline${BUILD_NUMBER}/
@@ -101,19 +66,10 @@ pipeline {
                     """
             }
         }
-        stage('Deploy app to Prod env') {
+        stage('Clean up cred') {
             steps {
-                    sh """
-                    cd app/deploy/manifest
-                    ls -la
-                    oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443
-                    oc project ${params.ocpProjectProd}
-                    oc create -f ${params.manifestFileProd}
-                    sleep 30s
-                    oc get pod
-                    oc get svc
-                    oc get route
-                    """
+                sh('docker logout')
+                sh('oc logout')
             }
         }
     }
