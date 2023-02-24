@@ -29,12 +29,12 @@ pipeline {
         stage('Build Container Image') {
             steps {
                 sh('docker image rm $ImageRegistry/devsecops:v${BUILD_NUMBER} || echo "No existing image found"')
-                sh('docker build --no-cache -t $ImageRegistry/devsecops:v${BUILD_NUMBER} -f $Dockerfile app/')
+                sh('docker build --no-cache -t $ImageRegistry/devsecops:v${BUILD_NUMBER} -f $Dockerfile app/py-sample')
             }
         }
         stage('Trivy - Container security scan') {
             steps {
-                sh 'cd app/deploy'
+                sh 'cd app/py-sample/deploy'
                 sh 'touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html'
                 sh 'trivy image --format template --template "@html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html --exit-code 0 --severity HIGH,CRITICAL ${ImageRegistry}/devsecops:v${BUILD_NUMBER}'
             }
