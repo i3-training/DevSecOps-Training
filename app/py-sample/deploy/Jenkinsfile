@@ -1,22 +1,27 @@
 pipeline {
     agent any
     parameters {
+        string(name: 'SqProject', defaultValue: 'devsecops-pipeline', description: 'SQ project key based on your project')
+        string(name: 'SqServer', defaultValue: 'https://student00.lab.i-3.my.id:9000', description: 'SQ server address')
         string(name: 'ImageRegistry', defaultValue: 'registry.i-3.my.id:5000', description: 'Image Registry address')
         string(name: 'OcpCluster', defaultValue: 'https://api.lab.i3datacenter.my.id:6443', description: 'Openshift Cluster API')
         choice(name: 'ocpProject', choices: 'devsecops-demo', description: 'Project where app to be deployed')
         choice(name: 'manifestFile', choices: ['dev-deployment.yaml', 'prod-deployment.yaml'], description: 'env where app to be deployed')
-        choice(name: 'appEndpoint', choices: ['gosip-app-prod.apps.lab.i3datacenter.my.id', 'gosip-app-dev.apps.lab.i3datacenter.my.id'], description: 'App endpoint for zap to scan')
-        string(name: 'OcpProject', defaultValue: 'devsecops-demo', description: 'Openshift Cluster API')
-    }
+        choice(name: 'appEndpoint', choices: ['gosip-app-prod.apps.lab.i3datacenter.my.id', 'gosip-app-dev.apps.lab.i3datacenter.my.id'], description: 'App endpoint for zap to scan')    }
     environment {
         REGISTRY_CRED = credentials('i3-internal-registry-cred')
         CLUSTER_TKN = credentials('i3-ocp-deployer-tkn')
+        SQ_TKN= credentials('i3-sq-tkn')
     }
     stages {
         stage('Sonarqube - Static application security testing process') {
             steps {
-                sh 'cd app/'
-                sh '/home/jenkins/sonar-scanner/sonar-scanner/bin/sonar-scanner'      
+                sh 'cd app/py-sample/'
+                sh 'sonar-scanner \
+                    -Dsonar.projectKey=$SqProject \
+                    -Dsonar.sources=. \
+                    -Dsonar.host.url=$SqServer \
+                    -Dsonar.login=$SQ_TKN'      
             }
         }
         stage('Build Container Image') {
