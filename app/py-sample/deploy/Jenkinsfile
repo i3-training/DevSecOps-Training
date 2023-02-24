@@ -1,6 +1,7 @@
 pipeline {
     agent any
     parameters {
+        string(name: 'Dockerfile', defaultValue: 'app/py-sample/deploy/Dockerfile', description: 'Dockerfile path for buildning the app')
         string(name: 'SqProject', defaultValue: 'devsecops-pipeline', description: 'SQ project key based on your project')
         string(name: 'SqServer', defaultValue: 'https://student00.lab.i-3.my.id:9000', description: 'SQ server address')
         string(name: 'ImageRegistry', defaultValue: 'registry.i-3.my.id:5000', description: 'Image Registry address')
@@ -28,7 +29,7 @@ pipeline {
         stage('Build Container Image') {
             steps {
                 sh('docker image rm $ImageRegistry/devsecops:v${BUILD_NUMBER} || echo "No existing image found"')
-                sh('docker build --no-cache -t $ImageRegistry/devsecops:v${BUILD_NUMBER} -f app/deploy/Dockerfile app/')
+                sh('docker build --no-cache -t $ImageRegistry/devsecops:v${BUILD_NUMBER} -f $Dockerfile app/')
             }
         }
         stage('Trivy - Container security scan') {
