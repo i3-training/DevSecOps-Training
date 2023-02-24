@@ -5,9 +5,9 @@ pipeline {
         string(name: 'SqServer', defaultValue: 'https://student00.lab.i-3.my.id:9000', description: 'SQ server address')
         string(name: 'ImageRegistry', defaultValue: 'registry.i-3.my.id:5000', description: 'Image Registry address')
         string(name: 'OcpCluster', defaultValue: 'https://api.lab.i3datacenter.my.id:6443', description: 'Openshift Cluster API')
-        choice(name: 'ocpProject', choices: 'devsecops-demo', description: 'Project where app to be deployed')
-        choice(name: 'manifestFile', choices: ['dev-deployment.yaml', 'prod-deployment.yaml'], description: 'env where app to be deployed')
-        choice(name: 'appEndpoint', choices: ['gosip-app-prod.apps.lab.i3datacenter.my.id', 'gosip-app-dev.apps.lab.i3datacenter.my.id'], description: 'App endpoint for zap to scan')    
+        string(name: 'ocpProject', defaultValue: 'devsecops-demo', description: 'Project where app to be deployed')
+        string(name: 'manifestFile', defaultValue: './dev-deployment.yaml', description: 'Path of manifest file to be deployed') 
+        string(name: 'appEndpoint', defaultValue: 'gosip-app-prod.apps.lab.i3datacenter.my.id', description: 'Application address that exposed by route for Dynamic Application Security Test')    
     }
     environment {
         REGISTRY_CRED = credentials('i3-internal-registry-cred')
