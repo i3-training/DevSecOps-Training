@@ -2,7 +2,7 @@ pipeline {
     agent any
     parameters {
         string(name: 'Dockerfile', defaultValue: 'app/py-sample/deploy/Dockerfile', description: 'Dockerfile path for buildning the app')
-        string(name: 'SqProject', defaultValue: 'devsecops-pipeline', description: 'SQ project key based on your project')
+        string(name: 'SqProject', defaultValue: 'devsecops-test-personal', description: 'SQ project key based on your project')
         string(name: 'SqServer', defaultValue: 'https://student00.lab.i-3.my.id:9000', description: 'SQ server address')
         string(name: 'ImageRegistry', defaultValue: 'registry.i-3.my.id:5000', description: 'Image Registry address')
         string(name: 'OcpCluster', defaultValue: 'https://api.lab.i3datacenter.my.id:6443', description: 'Openshift Cluster API')
@@ -34,9 +34,9 @@ pipeline {
         }
         stage('Trivy - Container security scan') {
             steps {
-                sh('cd app/py-sample/deploy && ls -lah ')
+                sh('cd app/py-sample/deploy')
                 sh('touch /tmp/pipeline-report/trivy-pipeline${BUILD_NUMBER}-report.html')
-                sh('trivy image --format template --template "@html.tpl" -o /tmp/pipeline-report/trivy-pipeline${BUILD_NUMBER}-report.html --exit-code 0 --severity HIGH,CRITICAL ${ImageRegistry}/devsecops:v${BUILD_NUMBER}')
+                sh('trivy image --format template --template @html.tpl -o /tmp/pipeline-report/trivy-pipeline${BUILD_NUMBER}-report.html --exit-code 0 --severity HIGH,CRITICAL ${ImageRegistry}/devsecops:v${BUILD_NUMBER}')
             }
         }
         stage('Push Image to nexus') {
