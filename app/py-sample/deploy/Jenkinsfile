@@ -7,7 +7,7 @@ pipeline {
         string(name: 'ImageRegistry', defaultValue: 'registry.i-3.my.id:5000', description: 'Image Registry address')
         string(name: 'OcpCluster', defaultValue: 'https://api.lab.i3datacenter.my.id:6443', description: 'Openshift Cluster API')
         string(name: 'ocpProject', defaultValue: 'devsecops-demo', description: 'Project where app to be deployed')
-        string(name: 'manifestFile', defaultValue: './dev-deployment.yaml', description: 'Path of manifest file to be deployed') 
+        string(name: 'manifestFile', defaultValue: 'app/py-sample/deploy/manifest/dev-deployment.yaml', description: 'Path of manifest file to be deployed') 
         string(name: 'appEndpoint', defaultValue: 'gosip-app-dev.apps.lab.i3datacenter.my.id', description: 'Application address that exposed by route for Dynamic Application Security Test')    
     }
     environment {
@@ -48,7 +48,7 @@ pipeline {
         }
         stage('Deploy app to Staging env') {
             steps {
-                sh('cd app/py-sample/deploy/manifest')
+                sh('cd app/py-sample/deploy/manifest && ls -lah')
                 sh('oc login --token=$CLUSTER_TKN --server=$OcpCluster')
                 sh('oc project $ocpProject && oc create -f $manifestFile')
                 sh('sleep 30s && oc get all')
