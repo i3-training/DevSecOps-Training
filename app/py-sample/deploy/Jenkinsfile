@@ -48,10 +48,8 @@ pipeline {
         }
         stage('Deploy app to Staging env') {
             steps {
-                sh('cd app/py-sample/deploy/manifest && ls -lah')
                 sh('oc login --token=$CLUSTER_TKN --server=$OcpCluster')
                 sh('oc project $ocpProject && oc create -f $manifestFile')
-                sh('sleep 30s && oc get all')
             }
         }
         stage('Zap Proxy - Dynamic application security testing process') {
