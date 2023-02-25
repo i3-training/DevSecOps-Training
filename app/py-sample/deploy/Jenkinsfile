@@ -48,8 +48,7 @@ pipeline {
         }
         stage('Deploy app to Staging env') {
             steps {
-                sh('cd app/deploy/manifest')
-                sh('echo "$CLUSTER_CRED_PSW" | oc login --server=$OpenshiftCluster -u $CLUSTER_CRED_USR --password-stdin')
+                sh('cd app/py-sample/deploy/manifest')
                 sh('oc login --token=$CLUSTER_TKN --server=$OcpCluster')
                 sh('oc project $ocpProject && oc create $manifestFile')
                 sh('sleep 30s && oc get all')

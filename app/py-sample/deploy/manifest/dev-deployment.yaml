@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: gosip-app-dev
-        image: 10.8.60.123:5000/gosip-app:0.01
+        image: registry.i-3.my.id:5000/devsecops:v20
         resources:
           limits:
             memory: "128Mi"
