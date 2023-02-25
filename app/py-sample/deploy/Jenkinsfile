@@ -8,7 +8,7 @@ pipeline {
         string(name: 'OcpCluster', defaultValue: 'https://api.lab.i3datacenter.my.id:6443', description: 'Openshift Cluster API')
         string(name: 'ocpProject', defaultValue: 'devsecops-demo', description: 'Project where app to be deployed')
         string(name: 'manifestFile', defaultValue: './dev-deployment.yaml', description: 'Path of manifest file to be deployed') 
-        string(name: 'appEndpoint', defaultValue: 'gosip-app-prod.apps.lab.i3datacenter.my.id', description: 'Application address that exposed by route for Dynamic Application Security Test')    
+        string(name: 'appEndpoint', defaultValue: 'gosip-app-dev.apps.lab.i3datacenter.my.id', description: 'Application address that exposed by route for Dynamic Application Security Test')    
     }
     environment {
         REGISTRY_CRED = credentials('i3-internal-registry-cred')
@@ -34,9 +34,9 @@ pipeline {
         }
         stage('Trivy - Container security scan') {
             steps {
-                sh 'cd app/py-sample/deploy'
-                sh 'touch /tmp/pipeline-report/trivy-pipeline${BUILD_NUMBER}-report.html'
-                sh 'trivy image --format template --template "@html.tpl" -o /tmp/pipeline-report/trivy-pipeline${BUILD_NUMBER}-report.html --exit-code 0 --severity HIGH,CRITICAL ${ImageRegistry}/devsecops:v${BUILD_NUMBER}'
+                sh('cd app/py-sample/deploy && ls -lah ')
+                sh('touch /tmp/pipeline-report/trivy-pipeline${BUILD_NUMBER}-report.html')
+                sh('trivy image --format template --template "@html.tpl" -o /tmp/pipeline-report/trivy-pipeline${BUILD_NUMBER}-report.html --exit-code 0 --severity HIGH,CRITICAL ${ImageRegistry}/devsecops:v${BUILD_NUMBER}')
             }
         }
         stage('Push Image to nexus') {
