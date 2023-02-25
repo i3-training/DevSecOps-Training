@@ -36,7 +36,7 @@ pipeline {
             steps {
                 sh('cd app/py-sample/deploy')
                 sh('touch /tmp/pipeline-report/trivy-pipeline${BUILD_NUMBER}-report.html')
-                sh('trivy image --format template --template @html.tpl -o /tmp/pipeline-report/trivy-pipeline${BUILD_NUMBER}-report.html --exit-code 0 --severity HIGH,CRITICAL ${ImageRegistry}/devsecops:v${BUILD_NUMBER}')
+                sh('trivy image --format template --template "@/app/py-sample/deploy/html.tpl" -o /tmp/pipeline-report/trivy-pipeline${BUILD_NUMBER}-report.html --exit-code 0 --severity HIGH,CRITICAL ${ImageRegistry}/devsecops:v${BUILD_NUMBER}')
             }
         }
         stage('Push Image to nexus') {
