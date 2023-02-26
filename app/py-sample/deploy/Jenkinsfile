@@ -55,7 +55,7 @@ pipeline {
         stage('Zap Proxy - Dynamic application security testing process') {
             steps {
                     sh """
-                    docker run --rm -v /zap:/zap/wrk:rw -v /tmp/zaphost/hosts:/etc/hosts -t ictu/zap2docker-weekly zap-baseline.py -I -j \
+                    docker run --rm --network=host -v /zap:/zap/wrk:rw -v /tmp/zaphost/hosts:/etc/hosts -t ictu/zap2docker-weekly zap-baseline.py -I -j \
                     -t http://$appEndpoint \
                     -r reportzap.html \
                     -J reportzap.json \
