@@ -54,20 +54,15 @@ pipeline {
         }
         stage('Zap Proxy - Dynamic application security testing process') {
             steps {
-                    sh """
-                    docker run --rm --network=host -v /zap:/zap/wrk:rw -v /tmp/zaphost/hosts:/etc/hosts -t ictu/zap2docker-weekly zap-baseline.py -I -j \
-                    -t http://$appEndpoint \
-                    -r reportzap.html \
-                    -J reportzap.json \
-                    -g reportzap.conf \
-                    --hook=/zap/auth_hook.py \
-                    -z "auth.loginurl=http://$appEndpoint/login \
-                        auth.username="user" \
-                        auth.password="password""
-                    mkdir /var/www/html/zapReport/pipeline${BUILD_NUMBER}/
-                    cp /zap/* /var/www/html/zapReport/pipeline${BUILD_NUMBER}/
-                    rm -rf /zap/*
-                    """
+                    sh 'docker run --rm -u zap \
+                            -v /tmp/pipeline-report/zap-reports:/zap/wrk/ \
+                            -v /tmp/zaphost/hosts:/etc/hosts \
+                            -e AUTH_LOGIN_URL=http://$appEndpoint/login \
+                            -e AUTH_USERNAME=user \
+                            -e AUTH_PASSWORD=password \
+                            owasp/zap2docker-stable zap-baseline.py \
+                            -t http://$appEndpoint -a \
+                            -r baseline_report.html -x baseline_report.json'
             }
         }
         stage('Clean up cred') {
