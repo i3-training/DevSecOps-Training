@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout'){
+            steps {
+		        checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/alanadiprastyo/DevSecOps-Training.git']]])
+            }
+        }
+        
+        stage('Trivy - SCA Scanning') {
+            steps {
+                sh('touch trivy-sca-report.json')
+                sh('trivy fs . --format json -o trivy-sca-report.json --exit-code 1 --severity CRITICAL')
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'trivy-sca-report.json', fingerprint: true
+                }
+            }
+        }
+
+      stage('Done') {
+   	    steps {
+                echo "Your Repo is safe!"
+       		}
+	    }
+	    
+    }
+}
