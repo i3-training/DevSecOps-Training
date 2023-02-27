@@ -5,7 +5,7 @@ pipeline {
             steps {
                 sh('trivy image --download-db-only')
                 sh('touch trivy-pipeline-report.html')
-                sh('trivy image --format template --template "@/usr/local/share/trivy/templates/html.tpl" -o trivy-pipeline-report.html --exit-code 1 --severity HIGH,CRITICAL registry.i-3.my.id:5000/devsecops:v43')
+                sh('trivy image --format template --template "@/usr/local/share/trivy/templates/html.tpl" -o trivy-pipeline-report.html --exit-code 1 --severity HIGH,CRITICAL registry.i-3.my.id:5000/devtiandicky/go-sample:2')
             }
             post {
                 always {
