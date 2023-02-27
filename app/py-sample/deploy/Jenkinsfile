@@ -1,103 +1,77 @@
 pipeline {
     agent any
     parameters {
-        string(name: 'nexusServer', defaultValue: '10.8.60.123:5000', description: 'Image Registry address')
-        string(name: 'nexusUser', defaultValue: 'jenkins', description: 'Image Registry username')
-        string(name: 'nexusPassword', defaultValue: 'jenkinspass', description: 'Image Registry Password')
-        choice(name: 'appEndpoint', choices: ['gosip-app-prod.apps.lab.i3datacenter.my.id', 'gosip-app-dev.apps.lab.i3datacenter.my.id'], description: 'App endpoint for zap to scan')
-        string(name: 'ocpUser', defaultValue: 'jenkins', description: 'Openshift username')
-        string(name: 'ocpPassword', defaultValue: 'sharkdevsecops1', description: 'Openshift user password')
-        choice(name: 'ocpProject', choices: ['intern-devsecops-dev', 'intern-devsecops-prod', 'intern-devsecops-stage'], description: 'env where app to be deployed')
-        choice(name: 'manifestFile', choices: ['dev-deployment.yaml', 'prod-deployment.yaml'], description: 'env where app to be deployed')
-        string(name: 'ocpProjectProd', defaultValue: 'intern-devsecops-prod', description: 'env where app to be deployed')
-        string(name: 'manifestFileProd', defaultValue: 'prod-deployment.yaml', description: 'env where app to be deployed')
+        string(name: 'Dockerfile', defaultValue: 'app/py-sample/deploy/Dockerfile', description: 'Dockerfile path for buildning the app')
+        string(name: 'SqProject', defaultValue: 'devsecops-test-personal', description: 'SQ project key based on your project')
+        string(name: 'SqServer', defaultValue: 'https://student00.lab.i-3.my.id:9000', description: 'SQ server address')
+        string(name: 'ImageRegistry', defaultValue: 'registry.i-3.my.id:5000', description: 'Image Registry address')
+        string(name: 'OcpCluster', defaultValue: 'https://api.lab.i3datacenter.my.id:6443', description: 'Openshift Cluster API')
+        string(name: 'ocpProject', defaultValue: 'devsecops-demo', description: 'Project where app to be deployed')
+        string(name: 'manifestFile', defaultValue: 'app/py-sample/deploy/manifest/dev-deployment.yaml', description: 'Path of manifest file to be deployed') 
+        string(name: 'appEndpoint', defaultValue: 'gosip-app-dev.apps.lab.i3datacenter.my.id', description: 'Application address that exposed by route for Dynamic Application Security Test')    
+    }
+    environment {
+        REGISTRY_CRED = credentials('i3-internal-registry-cred')
+        CLUSTER_TKN = credentials('i3-ocp-deployer-tkn')
+        SQ_TKN= credentials('i3-sq-tkn')
     }
     stages {
-        stage('Static application security testing process') {
+        stage('Sonarqube - Static application security testing process') {
             steps {
-                    sh """
-                    cd app/
-                    /home/jenkins/sonar-scanner/sonar-scanner/bin/sonar-scanner
-                    """
+                sh 'cd app/py-sample/'
+                sh 'sonar-scanner \
+                    -Dsonar.projectKey=$SqProject \
+                    -Dsonar.sources=. \
+                    -Dsonar.host.url=$SqServer \
+                    -Dsonar.login=$SQ_TKN'      
             }
         }
-        stage('Create Container Image') {
+        stage('Build Container Image') {
             steps {
-                sh """
-                docker image rm ${params.nexusServer}/devsecops:v${BUILD_NUMBER} || echo "No existing image found"
-                docker build --no-cache -t ${params.nexusServer}/devsecops:v${BUILD_NUMBER} -f app/deploy/Dockerfile app/
-                """
+                sh('docker image rm $ImageRegistry/devsecops:v${BUILD_NUMBER} || echo "No existing image found"')
+                sh('docker build --no-cache -t $ImageRegistry/devsecops:v${BUILD_NUMBER} -f $Dockerfile app/py-sample')
             }
         }
-        stage('Container security scan') {
+        stage('Trivy - Container security scan') {
             steps {
-                sh """
-                cd app/deploy
-                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html
-                touch /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json
-                trivy image -f json -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.json ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
-                trivy image --format template --template "@html.tpl" -o /var/www/html/trivy/pipeline${BUILD_NUMBER}/reportimagesecretpython.html --exit-code 0 --severity HIGH,CRITICAL ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
-                """
+                sh('cd app/py-sample/deploy')
+                sh('touch /tmp/pipeline-report/trivy-pipeline${BUILD_NUMBER}-report.html')
+                sh('trivy image --format template --template "@/usr/local/share/trivy/templates/html.tpl" -o /tmp/pipeline-report/trivy-pipeline${BUILD_NUMBER}-report.html --exit-code 0 --severity HIGH,CRITICAL ${ImageRegistry}/devsecops:v${BUILD_NUMBER}')
             }
         }
         stage('Push Image to nexus') {
             steps {
-                sh """
-                set +x
-                docker login --username=${params.nexusUser} --password=${params.nexusPassword} ${params.nexusServer}
-                set -x
-                docker push ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
-                docker rmi ${params.nexusServer}/devsecops:v${BUILD_NUMBER}
-                docker images
-                """
+                sh('echo "$REGISTRY_CRED_PSW" | docker login $ImageRegistry -u $REGISTRY_CRED_USR --password-stdin')
+                sh('docker push $ImageRegistry/devsecops:v${BUILD_NUMBER}')
+                sh('docker rmi $ImageRegistry/devsecops:v${BUILD_NUMBER}') 
             }
         }
-        stage('Deploy app to dev env') {
+        stage('Deploy app to Staging env') {
             steps {
-                    sh """
-                    cd app/deploy/manifest
-                    ls -la
-                    oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443
-                    oc project ${params.ocpProject}
-                    oc create -f ${params.manifestFile}
-                    sleep 30s
-                    oc get pod
-                    oc get svc
-                    oc get route
-                    """
+                sh('oc login --token=$CLUSTER_TKN --server=$OcpCluster')
+                sh('oc project $ocpProject && oc create -f $manifestFile')
             }
         }
-        stage('Zap Proxy') {
+        stage("Zap Proxy - Dynamic application security testing process") {
             steps {
-                    sh """
-                    docker run --rm -v /zap:/zap/wrk:rw -v /opt/hosts_zap:/etc/hosts -t ictu/zap2docker-weekly zap-baseline.py -I -j \
-                    -t http://${params.appEndpoint} \
-                    -r reportzap.html \
-                    -J reportzap.json \
-                    -g reportzap.conf \
-                    --hook=/zap/auth_hook.py \
-                    -z "auth.loginurl=http://${params.appEndpoint}/login \
-                        auth.username="user" \
-                        auth.password="password""
-                    mkdir /var/www/html/zapReport/pipeline${BUILD_NUMBER}/
-                    cp /zap/* /var/www/html/zapReport/pipeline${BUILD_NUMBER}/
-                    rm -rf /zap/*
-                    """
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    sh '''
+                    docker run --rm --network=host --user root -v $(pwd):/zap/wrk:rw -v /tmp/zaphost/hosts:/etc/hosts -t owasp/zap2docker-stable zap-baseline.py \
+                    	-t http://$appEndpoint \
+                    	-r reportzap.html \
+                    	-g reportzap.conf \
+                    	--hook=/zap/auth_hook.py \
+                    	-z "auth.loginurl=http://$appEndpoint/login \
+                    			auth.username="user" \
+                    			auth.password="password""
+                    '''
+                }
             }
         }
-        stage('Deploy app to Prod env') {
+        stage('Clean up cred') {
             steps {
-                    sh """
-                    cd app/deploy/manifest
-                    ls -la
-                    oc login -u ${params.ocpUser} -p ${params.ocpPassword} --server=https://api.lab.i3datacenter.my.id:6443
-                    oc project ${params.ocpProjectProd}
-                    oc create -f ${params.manifestFileProd}
-                    sleep 30s
-                    oc get pod
-                    oc get svc
-                    oc get route
-                    """
+                sh('docker logout')
+                sh('oc logout')
             }
         }
     }
