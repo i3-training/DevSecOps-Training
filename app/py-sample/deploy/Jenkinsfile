@@ -52,17 +52,20 @@ pipeline {
                 sh('oc project $ocpProject && oc create -f $manifestFile')
             }
         }
-        stage('Zap Proxy - Dynamic application security testing process') {
+        stage("Zap Proxy - Dynamic application security testing process") {
             steps {
-                    sh 'docker run --rm -u zap \
-                            -v /tmp/pipeline-report/zap-reports:/zap/wrk/ \
-                            -v /tmp/zaphost/hosts:/etc/hosts \
-                            -e AUTH_LOGIN_URL=http://$appEndpoint/login \
-                            -e AUTH_USERNAME=user \
-                            -e AUTH_PASSWORD=password \
-                            owasp/zap2docker-stable zap-baseline.py \
-                            -t http://$appEndpoint -a \
-                            -r baseline_report.html -x baseline_report.json'
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    sh '''
+                    docker run --rm --network=host --user root -v $(pwd):/zap/wrk:rw -v /tmp/zaphost/hosts:/etc/hosts -t owasp/zap2docker-stable zap-baseline.py \
+                    	-t http://$appEndpoint \
+                    	-r reportzap.html \
+                    	-g reportzap.conf \
+                    	--hook=/zap/auth_hook.py \
+                    	-z "auth.loginurl=http://$appEndpoint/login \
+                    			auth.username="user" \
+                    			auth.password="password""
+                    '''
+                }
             }
         }
         stage('Clean up cred') {

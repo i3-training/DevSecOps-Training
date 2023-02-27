@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'appEndpoint', defaultValue: 'gosip-app-dev.apps.lab.i3datacenter.my.id', description: 'Application address that exposed by route for Dynamic Application Security Test')    
+    }
+    stages {
+            stage("Zap Proxy - Dynamic application security testing process") {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    sh 'ls -lah && echo $(pwd)'
+                    sh '''
+                    docker run --rm --network=host --user root -v $(pwd):/zap/wrk:rw -v /tmp/zaphost/hosts:/etc/hosts -t owasp/zap2docker-stable zap-baseline.py \
+                    	-t http://$appEndpoint \
+                    	-r reportzap.html \
+                    	-g reportzap.conf
+                    '''
+                }
+            }
+        }       
+    }   
+}
