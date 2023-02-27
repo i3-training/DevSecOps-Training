@@ -11,7 +11,7 @@ pipeline {
       stage('Static Analysis with SonarQube') {
    	    steps {
        	    script {
-    		   sh '''sonar-scanner  -Dsonar.projectKey=student00-project  -Dsonar.sources=.  -Dsonar.host.url=https://student00.lab.i-3.my.id:9000 -Dsonar.login=sqp_7847bb8e96cc1e3e8986b098fcc6354fe701afc2 -Dsonar.qualitygate.wait=true'''   
+    		   sh '''sonar-scanner  -Dsonar.projectKey=student00-project  -Dsonar.sources=.  -Dsonar.host.url=https://student00.lab.i-3.my.id:9000 -Dsonar.login=sqp_7847bb8e96cc1e3e8986b098fcc6354fe701afc2'''   
                 }
        		}
 	    }
