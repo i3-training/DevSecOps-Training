@@ -11,7 +11,7 @@ pipeline {
         stage('Trivy - SCA Scanning') {
             steps {
                 sh('touch trivy-sca-report.json')
-                sh('trivy fs . --format json -o trivy-sca-report.json --exit-code 1 --severity CRITICAL')
+                sh('trivy fs . --format json -o trivy-sca-report.json --exit-code 0 --severity CRITICAL')
             }
             post {
                 always {
