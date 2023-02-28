@@ -1,0 +1,763 @@
+{
+  "SchemaVersion": 2,
+  "ArtifactName": "/mnt/d/Works/Golang Project/secret-check/_project-repository/1_SecretsTest",
+  "ArtifactType": "filesystem",
+  "Metadata": {
+    "ImageConfig": {
+      "architecture": "",
+      "created": "0001-01-01T00:00:00Z",
+      "os": "",
+      "rootfs": {
+        "type": "",
+        "diff_ids": null
+      },
+      "config": {}
+    }
+  },
+  "Results": [
+    {
+      "Target": "config.py",
+      "Class": "secret",
+      "Secrets": [
+        {
+          "RuleID": "aws-access-key-id",
+          "Category": "AWS",
+          "Severity": "CRITICAL",
+          "Title": "AWS Access Key ID",
+          "StartLine": 7,
+          "EndLine": 7,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 5,
+                "Content": "# AWS",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "# AWS",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 6,
+                "Content": "## AWS Access Key ID",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## AWS Access Key ID",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 7,
+                "Content": "AWS_ACCESS_KEY_ID = '********************'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "AWS_ACCESS_KEY_ID = '********************'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 8,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "AWS_ACCESS_KEY_ID = '********************'",
+          "Layer": {}
+        },
+        {
+          "RuleID": "aws-access-key-id",
+          "Category": "AWS",
+          "Severity": "CRITICAL",
+          "Title": "AWS Access Key ID",
+          "StartLine": 99,
+          "EndLine": 99,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 97,
+                "Content": "# AWS",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "# AWS",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 98,
+                "Content": "## AWS Access Key ID",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## AWS Access Key ID",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 99,
+                "Content": "VAR_1 = '********************'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "VAR_1 = '********************'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 100,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "VAR_1 = '********************'",
+          "Layer": {}
+        },
+        {
+          "RuleID": "private-key",
+          "Category": "AsymmetricPrivateKey",
+          "Severity": "HIGH",
+          "Title": "Asymmetric Private Key",
+          "StartLine": 18,
+          "EndLine": 18,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 16,
+                "Content": "## GCP Credentials",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## GCP Credentials",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 17,
+                "Content": "GCP_PRIVATE_KEY_ID = 'c4c474d61701fd6fd4191883b8fea9a8411bf771'",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "GCP_PRIVATE_KEY_ID = 'c4c474d61701fd6fd4191883b8fea9a8411bf771'",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 18,
+                "Content": "GCP_PRIVATE_KEY = '-----BEGIN PRIVATE KEY-----**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************-----END PRIVATE KEY-----\\n'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "GCP_PRIVATE_KEY = '-----BEGIN PRIVATE KEY-----**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************-----END PRIVATE KEY-----\\n'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 19,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "= '-----BEGIN PRIVATE KEY-----**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************-----END PRIVATE KEY",
+          "Layer": {}
+        },
+        {
+          "RuleID": "private-key",
+          "Category": "AsymmetricPrivateKey",
+          "Severity": "HIGH",
+          "Title": "Asymmetric Private Key",
+          "StartLine": 110,
+          "EndLine": 110,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 108,
+                "Content": "## GCP Credentials",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## GCP Credentials",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 109,
+                "Content": "VAR_4 = 'c4c474d61701fd6fd4191883b8fea9a8411bf771'",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "VAR_4 = 'c4c474d61701fd6fd4191883b8fea9a8411bf771'",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 110,
+                "Content": "VAR_5 = '-----BEGIN PRIVATE KEY-----**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************-----END PRIVATE KEY-----\\n'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "VAR_5 = '-----BEGIN PRIVATE KEY-----**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************-----END PRIVATE KEY-----\\n'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 111,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "= '-----BEGIN PRIVATE KEY-----**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************-----END PRIVATE KEY",
+          "Layer": {}
+        },
+        {
+          "RuleID": "slack-access-token",
+          "Category": "Slack",
+          "Severity": "HIGH",
+          "Title": "Slack token",
+          "StartLine": 50,
+          "EndLine": 50,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 48,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 49,
+                "Content": "## Slack OAuth Access Token",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## Slack OAuth Access Token",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 50,
+                "Content": "SLACK_OAUTH_ACCESS_TOKEN = '*****************-1413868247813-IG7Z6nYevC2hdviE3aJhb5kY'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "SLACK_OAUTH_ACCESS_TOKEN = '*****************-1413868247813-IG7Z6nYevC2hdviE3aJhb5kY'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 51,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "SLACK_OAUTH_ACCESS_TOKEN = '*****************-1413868247813-IG7Z6nYevC2hdviE3aJhb5kY'",
+          "Layer": {}
+        },
+        {
+          "RuleID": "slack-access-token",
+          "Category": "Slack",
+          "Severity": "HIGH",
+          "Title": "Slack token",
+          "StartLine": 142,
+          "EndLine": 142,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 140,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 141,
+                "Content": "## Slack OAuth Access Token",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## Slack OAuth Access Token",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 142,
+                "Content": "VAR_17 = '*****************-1413868247813-IG7Z6nYevC2hdviE3aJhb5kY'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "VAR_17 = '*****************-1413868247813-IG7Z6nYevC2hdviE3aJhb5kY'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 143,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "VAR_17 = '*****************-1413868247813-IG7Z6nYevC2hdviE3aJhb5kY'",
+          "Layer": {}
+        },
+        {
+          "RuleID": "slack-web-hook",
+          "Category": "Slack",
+          "Severity": "MEDIUM",
+          "Title": "Slack Webhook",
+          "StartLine": 53,
+          "EndLine": 53,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 51,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 52,
+                "Content": "## Slack Webhook",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## Slack Webhook",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 53,
+                "Content": "SLACK_WEBHOOK = '*******************************************************************************'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "SLACK_WEBHOOK = '*******************************************************************************'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 54,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "SLACK_WEBHOOK = '*******************************************************************************'",
+          "Layer": {}
+        },
+        {
+          "RuleID": "slack-web-hook",
+          "Category": "Slack",
+          "Severity": "MEDIUM",
+          "Title": "Slack Webhook",
+          "StartLine": 145,
+          "EndLine": 145,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 143,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 144,
+                "Content": "## Slack Webhook",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## Slack Webhook",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 145,
+                "Content": "VAR_18 = '*******************************************************************************'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "VAR_18 = '*******************************************************************************'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 146,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "VAR_18 = '*******************************************************************************'",
+          "Layer": {}
+        },
+        {
+          "RuleID": "stripe-publishable-token",
+          "Category": "Stripe",
+          "Severity": "LOW",
+          "Title": "Stripe Publishable Key",
+          "StartLine": 60,
+          "EndLine": 60,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 58,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 59,
+                "Content": "## Stripe Publishable Key",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## Stripe Publishable Key",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 60,
+                "Content": "STRIPE_PUBLISHABLE_KEY = '****************************************6789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "STRIPE_PUBLISHABLE_KEY = '****************************************6789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 61,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "STRIPE_PUBLISHABLE_KEY = '****************************************6789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
+          "Layer": {}
+        },
+        {
+          "RuleID": "stripe-publishable-token",
+          "Category": "Stripe",
+          "Severity": "LOW",
+          "Title": "Stripe Publishable Key",
+          "StartLine": 152,
+          "EndLine": 152,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 150,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 151,
+                "Content": "## Stripe Publishable Key",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## Stripe Publishable Key",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 152,
+                "Content": "VAR_20 = '****************************************6789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "VAR_20 = '****************************************6789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 153,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "VAR_20 = '****************************************6789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
+          "Layer": {}
+        },
+        {
+          "RuleID": "stripe-secret-token",
+          "Category": "Stripe",
+          "Severity": "CRITICAL",
+          "Title": "Stripe Secret Key",
+          "StartLine": 57,
+          "EndLine": 57,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 55,
+                "Content": "# Stripe",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "# Stripe",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 56,
+                "Content": "## Stripe Secret Key",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## Stripe Secret Key",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 57,
+                "Content": "STRIPE_SECRET_KEY = '****************************************6789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "STRIPE_SECRET_KEY = '****************************************6789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 58,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "STRIPE_SECRET_KEY = '****************************************6789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
+          "Layer": {}
+        },
+        {
+          "RuleID": "stripe-secret-token",
+          "Category": "Stripe",
+          "Severity": "CRITICAL",
+          "Title": "Stripe Secret Key",
+          "StartLine": 149,
+          "EndLine": 149,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 147,
+                "Content": "# Stripe",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "# Stripe",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 148,
+                "Content": "## Stripe Secret Key",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## Stripe Secret Key",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 149,
+                "Content": "VAR_19 = '****************************************6789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "VAR_19 = '****************************************6789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 150,
+                "Content": "",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "VAR_19 = '****************************************6789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
+          "Layer": {}
+        },
+        {
+          "RuleID": "twilio-api-key",
+          "Category": "Twilio",
+          "Severity": "MEDIUM",
+          "Title": "Twilio API Key",
+          "StartLine": 82,
+          "EndLine": 82,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 80,
+                "Content": "# Twilio",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "# Twilio",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 81,
+                "Content": "## Twilio API Key",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## Twilio API Key",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 82,
+                "Content": "TWILIO_API_KEY = '**********************************'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "TWILIO_API_KEY = '**********************************'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 83,
+                "Content": "TWILIO_ACCOUNT_SID = 'ACXvJ0lkU-BhvkmBkZPUWAxExvPSF6s5En'",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "TWILIO_ACCOUNT_SID = 'ACXvJ0lkU-BhvkmBkZPUWAxExvPSF6s5En'",
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "TWILIO_API_KEY = '**********************************'",
+          "Layer": {}
+        },
+        {
+          "RuleID": "twilio-api-key",
+          "Category": "Twilio",
+          "Severity": "MEDIUM",
+          "Title": "Twilio API Key",
+          "StartLine": 174,
+          "EndLine": 174,
+          "Code": {
+            "Lines": [
+              {
+                "Number": 172,
+                "Content": "# Twilio",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "# Twilio",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 173,
+                "Content": "## Twilio API Key",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "## Twilio API Key",
+                "FirstCause": false,
+                "LastCause": false
+              },
+              {
+                "Number": 174,
+                "Content": "VAR_26 = '**********************************'",
+                "IsCause": true,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "VAR_26 = '**********************************'",
+                "FirstCause": true,
+                "LastCause": true
+              },
+              {
+                "Number": 175,
+                "Content": "VAR_27 = 'ACXvJ0lkU-BhvkmBkZPUWAxExvPSF6s5En'",
+                "IsCause": false,
+                "Annotation": "",
+                "Truncated": false,
+                "Highlighted": "VAR_27 = 'ACXvJ0lkU-BhvkmBkZPUWAxExvPSF6s5En'",
+                "FirstCause": false,
+                "LastCause": false
+              }
+            ]
+          },
+          "Match": "VAR_26 = '**********************************'",
+          "Layer": {}
+        }
+      ]
+    }
+  ]
+}
