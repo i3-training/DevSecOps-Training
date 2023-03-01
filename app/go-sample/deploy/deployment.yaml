@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: go-sample
-        image: quay.io/devtiandicky/go-sample:latest
+        image: registry.i-3.my.id:5000/devtiandicky/go-sample:secure
         resources:
           limits:
             memory: "128Mi"
