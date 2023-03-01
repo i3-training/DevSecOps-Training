@@ -5,9 +5,7 @@ pipeline {
       stage('Zap Basline Scan') {
    	    steps {
        	    script {
-                sh "echo \$(pwd)"
-                sh "chmod 777 \$(pwd)"
-    		   sh '''docker run --user $(id -u):$(id -g) -w /zap -v $(pwd):/zap/wrk:rw --rm owasp/zap2docker-stable zap-baseline.py -t http://gosip-app-dev.apps.lab.i3datacenter.my.id -J zap-output.json -r zap-output.html'''   
+    		   sh '''docker run -u root -w /zap -v $(pwd):/zap/wrk:rw --rm owasp/zap2docker-stable zap-baseline.py -t http://gosip-app-dev.apps.lab.i3datacenter.my.id -J zap-output.json -r zap-output.html'''   
                 }
        		}
             post {
