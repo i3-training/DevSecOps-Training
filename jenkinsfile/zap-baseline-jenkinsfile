@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+
+    stages {       
+      stage('Zap Basline Scan') {
+   	    steps {
+       	    script {
+    		   sh '''docker run --user $(id -u):$(id -g) -w /zap -v $(pwd):/zap/wrk:rw --rm owasp/zap2docker-stable zap-baseline.py -t http://gosip-app-dev.apps.lab.i3datacenter.my.id -J zap-output.json -r zap-output.html'''   
+                }
+       		}
+            post {
+                always {
+                    archiveArtifacts artifacts: 'zap-output.json', fingerprint: true
+                }
+            }
+	    }
+
+      stage('Done') {
+   	    steps {
+                echo "Your code is clean!"
+       		}
+	    }
+	    
+    }
+}
