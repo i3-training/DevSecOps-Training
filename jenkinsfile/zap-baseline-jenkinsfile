@@ -17,7 +17,7 @@ pipeline {
 
       stage('Done') {
    	    steps {
-                echo "Your code is clean!"
+                echo "Your web apps is secure!"
        		}
 	    }
 	    

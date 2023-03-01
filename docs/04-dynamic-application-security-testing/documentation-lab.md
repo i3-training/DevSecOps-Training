@@ -123,8 +123,9 @@ FAIL-NEW: 0     FAIL-INPROG: 0  WARN-NEW: 8     WARN-INPROG: 0  INFO: 0 IGNORE: 
 If you want the output in JSON format, you can use the -J option
 ```
 sudo su
-docker run --user $(id -u):$(id -g) -w /zap -v $(pwd):/zap/wrk:rw --rm owasp/zap2docker-stable zap-baseline.py -t http://gosip-app-dev.apps.lab.i3datacenter.my.id -J zap-output.json
+docker run -u root -w /zap -v $(pwd):/zap/wrk:rw --rm owasp/zap2docker-stable zap-baseline.py -t http://gosip-app-dev.apps.lab.i3datacenter.my.id -J zap-output.json -r zap-output.html
 ```
  
 
- 
+### Running Zap on jenkins CI/CD
+Jenkinsfile : zap-baseline-jenkinsfile
