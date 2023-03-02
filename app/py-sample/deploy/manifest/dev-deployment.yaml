@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: gosip-app-dev
-        image: registry.i-3.my.id:5000/devsecops:v20
+        image: registry.i-3.my.id:5000/instructor/devsecops:1
         resources:
           limits:
             memory: "128Mi"
@@ -66,7 +66,7 @@ metadata:
   labels:
     app: gosip-app-dev
 spec:
-  host: gosip-app-dev.apps.lab.i3datacenter.my.id 
+  host: gosip-app-instructor.apps.lab.i3datacenter.my.id 
   port:
     targetPort: 10007-tcp
   to:

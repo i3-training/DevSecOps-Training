@@ -42,8 +42,8 @@ pipeline {
         stage('Push Image to nexus') {
             steps {
                 sh('echo "$REGISTRY_CRED_PSW" | docker login $ImageRegistry -u $REGISTRY_CRED_USR --password-stdin')
-                sh('docker push $ImageRegistry/devsecops:v${BUILD_NUMBER}')
-                sh('docker rmi $ImageRegistry/devsecops:v${BUILD_NUMBER}') 
+                sh('docker push $ImageRegistry/instructor/devsecops:v${BUILD_NUMBER}')
+                sh('docker rmi $ImageRegistry/instructor/devsecops:v${BUILD_NUMBER}') 
             }
         }
         stage('Deploy app to Staging env') {
