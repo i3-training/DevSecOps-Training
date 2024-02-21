@@ -7,7 +7,7 @@ RUN go get -d -v ./...
 RUN go build -o /go/bin/app -v ./...
 
 #final stage
-FROM nginx:1.19.7-alpine
+FROM nginx:1.25.1-alpine
 RUN apk --no-cache add ca-certificates curl
 COPY --from=builder /go/bin/app /app
 COPY ./ /
